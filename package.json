@@ -1,0 +1,88 @@
+{
+  "name": "testwa",
+  "version": "0.0.17",
+  "description": "testwa desktop app",
+  "author": "canfeit",
+  "license": "MIT",
+  "keywords": ["testwa", "appium"],
+  "homepage": "https://github.com/canfeit/testwa#readme",
+  "scripts": {
+    "start": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "package": "yarn compile && build --publish always",
+    "package-all": "yarn compile && build -mwl",
+    "package-linux": "yarn compile && build --linux",
+    "package-win": "yarn compile && build --win --x64",
+    "preinstall": "conda activate py2",
+    "prepackage": "standard-version&&git push --follow-tags"
+  },
+  "build": {
+    "productName": "testwa",
+    "appId": "com.testwa.desktop",
+    "copyright": "testwa",
+    "files": [
+      "app/common/",
+      "app/dist/",
+      "app/minicap/libs/",
+      "app/minicap/shared/",
+      "app/minitouch/libs/",
+      "app/node/",
+      "node_modules/",
+      "app/testwa/",
+      "app/index.html",
+      "app/main.js",
+      "package.json"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": ["nsis"]
+    },
+    "linux": {
+      "target": ["deb", "AppImage"],
+      "category": "Development"
+    },
+    "directories": {
+      "buildResources": "resources",
+      "output": "release"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canfeit/testwa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/canfeit/testwa/issues"
+  },
+  "dependencies": {
+    "adbkit": "^2.11.0",
+    "appium": "^1.8.0",
+    "appium-adb": "^6.9.1",
+    "electron-updater": "^2.21.10",
+    "emailjs-utf7": "^4.0.1",
+    "source-map-support": "^0.5.5"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "",
+    "electron": "beta",
+    "electron-builder": "next",
+    "electron-webpack": "next",
+    "react": "next",
+    "react-dom": "next",
+    "react-hot-loader": "",
+    "standard-version": "",
+    "webpack": ""
+  }
+}

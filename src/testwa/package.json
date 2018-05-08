@@ -1,0 +1,52 @@
+{
+  "name": "testwa",
+  "description": "Automation for Apps.",
+  "tags": [
+    "testwa",
+    "appium",
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
+  "version": "1.7.2",
+  "author": "https://github.com/canfeit",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/canfeit/testwa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/canfeit/testwa/issues"
+  },
+  "engines": {
+    "node": ">=5",
+    "npm": ">=3"
+  },
+  "main": "main.js",
+  "bin": {
+    "testwa": "main.js"
+  },
+  "directories": {
+    "lib": "./lib",
+    "doc": "./docs"
+  },
+  "dependencies": {
+    "appium": "",
+    "emailjs-utf7": "",
+    "fs-extra": ""
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "pre-commit": [
+    "precommit-msg",
+    "precommit-test"
+  ],
+  "pkg": {
+    "assets": "./node_modules/**/*.*"
+  }
+}
