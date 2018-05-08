@@ -1,10 +1,13 @@
 {
   "name": "testwa",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "testwa desktop app",
   "author": "canfeit",
   "license": "MIT",
-  "keywords": ["testwa", "appium"],
+  "keywords": [
+    "testwa",
+    "appium"
+  ],
   "homepage": "https://github.com/canfeit/testwa#readme",
   "scripts": {
     "start": "electron-webpack dev",
@@ -20,19 +23,6 @@
     "productName": "testwa",
     "appId": "com.testwa.desktop",
     "copyright": "testwa",
-    "files": [
-      "app/common/",
-      "app/dist/",
-      "app/minicap/libs/",
-      "app/minicap/shared/",
-      "app/minitouch/libs/",
-      "app/node/",
-      "node_modules/",
-      "app/testwa/",
-      "app/index.html",
-      "app/main.js",
-      "package.json"
-    ],
     "dmg": {
       "contents": [
         {
@@ -48,10 +38,15 @@
       ]
     },
     "win": {
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "linux": {
-      "target": ["deb", "AppImage"],
+      "target": [
+        "deb",
+        "AppImage"
+      ],
       "category": "Development"
     },
     "directories": {
