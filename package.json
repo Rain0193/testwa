@@ -4,10 +4,7 @@
   "description": "testwa desktop app",
   "author": "canfeit",
   "license": "MIT",
-  "keywords": [
-    "testwa",
-    "appium"
-  ],
+  "keywords": ["testwa", "appium"],
   "homepage": "https://github.com/canfeit/testwa#readme",
   "scripts": {
     "start": "electron-webpack dev",
@@ -38,15 +35,10 @@
       ]
     },
     "win": {
-      "target": [
-        "nsis"
-      ]
+      "target": ["nsis"]
     },
     "linux": {
-      "target": [
-        "deb",
-        "AppImage"
-      ],
+      "target": ["deb", "AppImage"],
       "category": "Development"
     },
     "directories": {
@@ -62,20 +54,22 @@
     "url": "https://github.com/canfeit/testwa/issues"
   },
   "dependencies": {
-    "adbkit": "^2.11.0",
-    "appium": "^1.8.0",
-    "appium-adb": "^6.9.1",
+    "adbkit": ">=2.11.0",
+    "appium": ">=1.8.0",
+    "appium-adb": ">=6.9.1",
+    "electron-log": ">=2.2.14",
     "electron-updater": "^2.21.10",
-    "emailjs-utf7": "^4.0.1",
-    "source-map-support": "^0.5.5"
+    "emailjs-utf7": ">=4.0.1",
+    "minicap": ">=0.2.0-0",
+    "source-map-support": ">=0.5.5"
   },
   "devDependencies": {
     "@babel/preset-react": "",
-    "electron": "beta",
-    "electron-builder": "next",
-    "electron-webpack": "next",
-    "react": "next",
-    "react-dom": "next",
+    "electron": "",
+    "electron-builder": "",
+    "electron-webpack": "",
+    "react": "",
+    "react-dom": "",
     "react-hot-loader": "",
     "standard-version": "",
     "webpack": ""

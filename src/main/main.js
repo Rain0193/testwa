@@ -1,22 +1,26 @@
-'use strict'
+"use strict";
 import { app, Menu, BrowserWindow } from "electron";
 import update from "./update";
 // const prepareNext = require('electron-next')
 
 async function createMainWindow() {
   // await prepareNext('../renderer')
-  const mainWindow = new BrowserWindow()
+  const mainWindow = new BrowserWindow();
 
   if (process.defaultApp) {
-    mainWindow.webContents.openDevTools()
-    mainWindow.maximize()
-    mainWindow.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
+    mainWindow.webContents.openDevTools();
+    mainWindow.maximize();
+    mainWindow.loadURL(
+      `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`
+    );
   } else {
-    mainWindow.loadURL(require('url').format({
-      protocol: 'file',
-      slashes: true,
-      pathname: require('path').join(__dirname, 'index.html')
-    }))
+    mainWindow.loadURL(
+      require("url").format({
+        protocol: "file",
+        slashes: true,
+        pathname: require("path").join(__dirname, "index.html")
+      })
+    );
   }
   // mainWindow.once('ready-to-show', () => {
   //   mainWindow.maximize()
@@ -29,15 +33,15 @@ async function createMainWindow() {
   //   mainWindow.focus();
   // });
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(require('./menu')));
+  Menu.setApplicationMenu(Menu.buildFromTemplate(require("./menu")));
 
-  await require('./device-server').start()
+  await require("./device-server").start();
 
-  update()
+  update();
 }
 
 app.commandLine.appendSwitch("enable-experimental-web-platform-features");
 
-app.once('ready', createMainWindow);
+app.once("ready", createMainWindow);
 
-app.once('window-all-closed', app.quit);
+app.once("window-all-closed", app.quit);
