@@ -1,6 +1,6 @@
 {
   "name": "testwa",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "testwa desktop app",
   "author": "canfeit",
   "license": "MIT",
@@ -24,7 +24,7 @@
     "appId": "com.testwa.desktop",
     "copyright": "Copyright © 2018 ${author}",
     "files": [
-      "!static/*",
+      "!static/**/*",
       "static/minicap/libs",
       "static/minicap/jni/minicap-shared/aosp/libs",
       "static/minitouch/libs"
