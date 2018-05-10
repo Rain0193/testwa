@@ -1,6 +1,6 @@
 {
   "name": "testwa",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "testwa desktop app",
   "author": "canfeit",
   "license": "MIT",
@@ -22,12 +22,20 @@
   "build": {
     "productName": "testwa录制工具",
     "appId": "com.testwa.desktop",
-    "copyright": "Copyright © 2018 ${author}",
-    "files": [
-      "!static/**/*",
-      "static/minicap/libs",
-      "static/minicap/jni/minicap-shared/aosp/libs",
-      "static/minitouch/libs"
+    "copyright": "Copyright © 2018 testwa",
+    "extraResources": [
+      {
+        "from": "static/minicap/libs",
+        "to": "static/minicap/libs"
+      },
+      {
+        "from": "static/minicap/jni/minicap-shared/aosp/libs",
+        "to": "static/minicap/jni/minicap-shared/aosp/libs"
+      },
+      {
+        "from": "static/minitouch/libs",
+        "to": "static/minitouch/libs"
+      }
     ],
     "dmg": {
       "contents": [
