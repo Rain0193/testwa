@@ -1,54 +1,34 @@
-const { autoUpdater } = require("electron-updater");
-const { Menu } = require('electron')
-let state = 'checking'
+import { autoUpdater } from "electron-updater";
+import { Menu } from "electron";
 export default () => {
-    if (process.mas) return
+  if (process.mas) return;
+  const menuItems = [
+    Menu.getApplicationMenu().getMenuItemById("checkForUpdate"),
+    Menu.getApplicationMenu().getMenuItemById("downloadingUpdate"),
+    Menu.getApplicationMenu().getMenuItemById("restartToUpdate")
+  ];
+  for (const menuItem of menuItems)
+    menuItem.visible = menuItem.id === "checkForUpdate" ? true : false;
 
-    autoUpdater.on('checking-for-update', () => {
-        state = 'checking'
-        exports.updateMenu()
-    })
+  autoUpdater.on("update-available", () => {
+    for (const menuItem of menuItems)
+      menuItem.visible = menuItem.id === "downloadingUpdate" ? true : false;
+  });
 
-    autoUpdater.on('update-available', () => {
-        state = 'checking'
-        exports.updateMenu()
-    })
+  autoUpdater.on("update-not-available", () => {
+    for (const menuItem of menuItems)
+      menuItem.visible = menuItem.id === "checkForUpdate" ? true : false;
+  });
 
-    autoUpdater.on('update-downloaded', () => {
-        state = 'installed'
-        exports.updateMenu()
-    })
+  autoUpdater.on("update-downloaded", () => {
+    for (const menuItem of menuItems)
+      menuItem.visible = menuItem.id === "restartToUpdate" ? true : false;
+  });
 
-    autoUpdater.on('update-not-available', () => {
-        state = 'no-update'
-        exports.updateMenu()
-    })
+  autoUpdater.on("error", () => {
+    for (const menuItem of menuItems)
+      menuItem.visible = menuItem.id === "checkForUpdate" ? true : false;
+  });
 
-    autoUpdater.on('error', () => {
-        state = 'no-update'
-        exports.updateMenu()
-    })
-
-    autoUpdater.checkForUpdates()
-}
-
-exports.updateMenu = () => {
-    const menu = Menu.getApplicationMenu()
-    menu.items.forEach(item => {
-        if (item.submenu) {
-            item.submenu.items.forEach(item => {
-                switch (item.key) {
-                    case 'checkForUpdate':
-                        item.visible = state === 'no-update'
-                        break
-                    case 'checkingForUpdate':
-                        item.visible = state === 'checking'
-                        break
-                    case 'restartToUpdate':
-                        item.visible = state === 'installed'
-                        break
-                }
-            })
-        }
-    })
-}
+  autoUpdater.checkForUpdatesAndNotify();
+};

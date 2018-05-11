@@ -1,6 +1,7 @@
 "use strict";
 import { app, Menu, BrowserWindow } from "electron";
 import update from "./update";
+import menu from "./menu";
 // const prepareNext = require('electron-next')
 
 async function createMainWindow() {
@@ -32,12 +33,10 @@ async function createMainWindow() {
   //   mainWindow.show();
   //   mainWindow.focus();
   // });
-
-  Menu.setApplicationMenu(Menu.buildFromTemplate(require("./menu")));
-
-  await require("./device-server").start();
-
+  // @ts-ignore
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
   update();
+  await require("./device-server").start();
 }
 
 app.commandLine.appendSwitch("enable-experimental-web-platform-features");

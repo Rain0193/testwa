@@ -1,82 +1,88 @@
-const { app, shell } = require('electron');
-const { autoUpdater } = require("electron-updater");
-
-module.exports = [{
-  label: '查看',
-  submenu: [{
-    label: '刷新',
-    accelerator: 'Cmd/Ctrl+R',
-    click: (_item, window) => {
-      window.reload();
-    }
-  }, {
-    label: '切换全屏',
-    accelerator: (() => {
-      if (process.platform === 'darwin') {
-        return 'Ctrl+Command+F'
-      } else {
-        return 'F11'
+import { app, shell, dialog } from "electron";
+import { autoUpdater } from "electron-updater";
+export default [
+  {
+    label: "查看",
+    submenu: [
+      {
+        label: "刷新",
+        role: "reload"
+      },
+      {
+        label: "切换全屏",
+        role: "togglefullscreen"
+      },
+      {
+        label: "调试",
+        role: "toggledevtools"
       }
-    })(),
-    click: (_item, window) => {
-      window.setFullScreen(!window.isFullScreen());
-    }
-  }, {
-    label: '调试',
-    accelerator: (() => {
-      if (process.platform === 'darwin') {
-        return 'Alt+Command+I'
-      } else {
-        return 'Ctrl+Shift+I'
+    ]
+  },
+  {
+    label: "帮助",
+    submenu: [
+      {
+        label: "云测平台",
+        click() {
+          shell.openExternal("http://cloud.testwa.com/");
+        }
+      },
+      {
+        label: "在线文档",
+        click() {
+          shell.openExternal("https://github.com/canfeit/testwa#readme");
+        }
+      },
+      {
+        label: "互动社区",
+        click() {
+          shell.openExternal("http://forum.testwa.com/");
+        }
+      },
+      {
+        label: "意见反馈",
+        click() {
+          shell.openExternal("https://github.com/canfeit/testwa/issues");
+        }
+      },
+      {
+        type: "separator"
+      },
+      {
+        label: "关于",
+        click: () => {
+          dialog.showMessageBox(
+            {
+              type: "info",
+              title: "关于",
+              buttons: ["OK"],
+              message: `
+                  Testwa ${app.getVersion()}
+                  ♥感谢以下开源项目♥
+                  Electron ${process.versions.electron}
+                  Chromium ${process.versions.chrome}
+                  Node.js ${process.versions.node}
+                `
+            },
+            () => {}
+          );
+        }
+      },
+      {
+        label: "检查更新",
+        id: "checkForUpdate",
+        click: autoUpdater.checkForUpdates
+      },
+      {
+        label: "正在下载更新",
+        enabled: false,
+        id: "downloadingUpdate"
+      },
+      {
+        label: "重启并安装更新",
+        id: "restartToUpdate",
+        click: autoUpdater.quitAndInstall
       }
-    })(),
-    click: (_item, window) => {
-      window.toggleDevTools();
-    }
-  }]
-}, {
-  label: '帮助',
-  submenu: [{
-    label: '关于',
-    click() {
-      shell.openExternal('http://testwa.com/');
-    }
-  }, {
-    label: '文档',
-    click() {
-      shell.openExternal('https://github.com/canfeit/testwa#readme');
-    }
-  }, {
-    label: '社区',
-    click() {
-      shell.openExternal('http://forum.testwa.com/');
-    }
-  }, {
-    label: '反馈',
-    click() {
-      shell.openExternal('https://github.com/canfeit/testwa/issues');
-    }
-  }, {
-    label: `Version ${app.getVersion()}`,
-    enabled: false
-  }, {
-    label: '正在检查更新',
-    enabled: false,
-    key: 'checkingForUpdate'
-  }, {
-    label: '检查更新',
-    visible: false,
-    key: 'checkForUpdate',
-    click: function () {
-      autoUpdater.checkForUpdatesAndNotify()
-    }
-  }, {
-    label: '重启并安装更新',
-    enabled: true,
-    visible: false,
-    key: 'restartToUpdate',
-    click: function () {
-      autoUpdater.quitAndInstall()
-    }
-  }]
-}];
+    ]
+  }
+];

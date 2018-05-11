@@ -4,10 +4,7 @@
   "description": "testwa desktop app",
   "author": "canfeit",
   "license": "MIT",
-  "keywords": [
-    "testwa",
-    "appium"
-  ],
+  "keywords": ["testwa", "appium"],
   "homepage": "https://github.com/canfeit/testwa#readme",
   "scripts": {
     "start": "electron-webpack dev",
@@ -52,15 +49,10 @@
       ]
     },
     "win": {
-      "target": [
-        "nsis"
-      ]
+      "target": ["nsis"]
     },
     "linux": {
-      "target": [
-        "deb",
-        "AppImage"
-      ],
+      "target": ["deb", "AppImage"],
       "category": "Development"
     },
     "directories": {
