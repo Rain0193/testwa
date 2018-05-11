@@ -7,27 +7,27 @@ export default () => {
     Menu.getApplicationMenu().getMenuItemById("downloadingUpdate"),
     Menu.getApplicationMenu().getMenuItemById("restartToUpdate")
   ];
-  for (const menuItem of menuItems)
-    menuItem.visible = menuItem.id === "checkForUpdate" ? true : false;
-
+  const updateMenu = id => {
+    for (const menuItem of menuItems) {
+      // @ts-ignore
+      menuItem.visible = menuItem.id === id ? true : false;
+    }
+  };
+  updateMenu("checkForUpdate");
   autoUpdater.on("update-available", () => {
-    for (const menuItem of menuItems)
-      menuItem.visible = menuItem.id === "downloadingUpdate" ? true : false;
+    updateMenu("downloadingUpdate");
   });
 
   autoUpdater.on("update-not-available", () => {
-    for (const menuItem of menuItems)
-      menuItem.visible = menuItem.id === "checkForUpdate" ? true : false;
+    updateMenu("checkForUpdate");
   });
 
   autoUpdater.on("update-downloaded", () => {
-    for (const menuItem of menuItems)
-      menuItem.visible = menuItem.id === "restartToUpdate" ? true : false;
+    updateMenu("restartToUpdate");
   });
 
   autoUpdater.on("error", () => {
-    for (const menuItem of menuItems)
-      menuItem.visible = menuItem.id === "checkForUpdate" ? true : false;
+    updateMenu("checkForUpdate");
   });
 
   autoUpdater.checkForUpdatesAndNotify();
