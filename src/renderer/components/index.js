@@ -16,10 +16,10 @@ export default class App extends Component {
     // @ts-ignore
     super();
     this.state = {};
-  }
-  async componentDidMount() {
     // @ts-ignore
     require("common/adb").trackDevices(this);
+  }
+  startMini() {
     const canvas = ReactDOM.findDOMNode(this.refs.canvas);
     canvas.addEventListener(
       "mousedown",
@@ -66,6 +66,7 @@ export default class App extends Component {
             <div onClick={onHome}>home</div>
             <div onClick={onBack}>back</div>
             <div onClick={onMenu}>menu</div>
+            <button onClick={this.startMini.bind(this)}>startMini</button>
             {console.log(this.state.devices)}
           </div>
         </div>

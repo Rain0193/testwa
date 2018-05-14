@@ -36,11 +36,11 @@ async function createMainWindow() {
   // @ts-ignore
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
   update();
-  await require("./device-server").start();
+  // await require("./device-server").start();
 }
 
 app.commandLine.appendSwitch("enable-experimental-web-platform-features");
 
 app.once("ready", createMainWindow);
 
-app.once("window-all-closed", app.quit);
+// app.once("window-all-closed", app.quit);
