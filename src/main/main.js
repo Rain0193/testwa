@@ -1,13 +1,13 @@
 "use strict";
 import { app, Menu, BrowserWindow } from "electron";
-import update from "./update";
 import menu from "./menu";
+import upgrade from "./upgrade";
+import trackDevices from "./adb";
 // const prepareNext = require('electron-next')
-
 async function createMainWindow() {
   // await prepareNext('../renderer')
   const mainWindow = new BrowserWindow();
-
+  trackDevices(mainWindow);
   if (process.defaultApp) {
     mainWindow.webContents.openDevTools();
     mainWindow.maximize();
@@ -35,12 +35,11 @@ async function createMainWindow() {
   // });
   // @ts-ignore
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
-  update();
-  // await require("./device-server").start();
+  upgrade();
 }
 
 app.commandLine.appendSwitch("enable-experimental-web-platform-features");
 
 app.once("ready", createMainWindow);
 
-// app.once("window-all-closed", app.quit);
+app.once("window-all-closed", app.quit);

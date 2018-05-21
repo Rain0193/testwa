@@ -3,8 +3,9 @@
 // import wd from "wd";
 // import request from "request-promise";
 // import AppiumMethodHandler from "./appium-method-handler";
-const server = require("../testwa").main;
-server(
+
+const server = require(".").main;
+const app = server(
   {
     // port: 4723, // 监听的端口	--port 4723
     // callbackAddress: null, // 回调IP地址 (默认: 相同的IP地址)	--callback-address 127.0.0.1
@@ -15,7 +16,7 @@ server(
     // localTimezone: false, // 使用本地时间戳
     // relaxedSecurityEnabled: false, // 安全检查
     // webhook: null, // 同时发送日志到 HTTP 监听器	--webhook localhost:9876
-    logHandler: (a, b) => console.log("log~~~~~~~~~~~~~~~~", a, b) // 日志监听方法
+    logHandler: (a, b) => console.error("log~~~~~~~~~~~~~~~~", a, b) // 日志监听方法
   },
   true
 );

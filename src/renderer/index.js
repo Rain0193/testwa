@@ -1,24 +1,16 @@
 import React from "react";
-import ReactDOM from "react-dom";
-
-import App from "./components";
-import { AppContainer } from "react-hot-loader";
-import "common/server";
-const render = Component => {
-  ReactDOM.render(
-    <AppContainer>
-      <Component />
-    </AppContainer>,
-    document.getElementById("app")
-  );
-};
-
-render(App);
-
-// @ts-ignore
-if (module.hot) {
-  // @ts-ignore
-  module.hot.accept("./components", () => {
-    render(require("./components"));
-  });
-}
+import { render } from "react-dom";
+import { Provider } from "styletron-react";
+import { parse } from "querystring";
+import Main from "./components/main/index";
+import Device from "./components/device/index";
+render(
+  <Provider value={new (require("styletron-engine-atomic")).Client()}>
+    {parse(window.location.search)["?device"] ? (
+      <Device deviceId={parse(window.location.search)["?device"]} />
+    ) : (
+      <Main />
+    )}
+  </Provider>,
+  document.getElementById("app")
+);

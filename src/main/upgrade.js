@@ -2,24 +2,24 @@ import { autoUpdater } from "electron-updater";
 import { Menu } from "electron";
 export default () => {
   if (process.mas) return;
-  const menuItems = [
-    Menu.getApplicationMenu().getMenuItemById("checkForUpdate"),
+  const upgradeItems = [
+    Menu.getApplicationMenu().getMenuItemById("isLatest"),
     Menu.getApplicationMenu().getMenuItemById("downloadingUpdate"),
     Menu.getApplicationMenu().getMenuItemById("restartToUpdate")
   ];
   const updateMenu = id => {
-    for (const menuItem of menuItems) {
+    for (const upgradeItem of upgradeItems) {
       // @ts-ignore
-      menuItem.visible = menuItem.id === id ? true : false;
+      upgradeItem.visible = upgradeItem.id === id ? true : false;
     }
   };
-  updateMenu("checkForUpdate");
+  updateMenu("isLatest");
   autoUpdater.on("update-available", () => {
     updateMenu("downloadingUpdate");
   });
 
   autoUpdater.on("update-not-available", () => {
-    updateMenu("checkForUpdate");
+    updateMenu("isLatest");
   });
 
   autoUpdater.on("update-downloaded", () => {
@@ -27,7 +27,7 @@ export default () => {
   });
 
   autoUpdater.on("error", () => {
-    updateMenu("checkForUpdate");
+    updateMenu("isLatest");
   });
 
   autoUpdater.checkForUpdatesAndNotify();

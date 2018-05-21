@@ -68,15 +68,20 @@ export default [
           );
         }
       },
+      // {
+      //   label: "检查更新",
+      //   id: "checkForUpdate",
+      //   click: autoUpdater.checkForUpdates
+      // },
       {
-        label: "检查更新",
-        id: "checkForUpdate",
-        click: autoUpdater.checkForUpdates
+        label: "已是最新",
+        id: "isLatest",
+        enabled: false
       },
       {
         label: "正在下载更新",
-        enabled: false,
-        id: "downloadingUpdate"
+        id: "downloadingUpdate",
+        enabled: false
       },
       {
         label: "重启并安装更新",

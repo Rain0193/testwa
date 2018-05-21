@@ -43,3 +43,6 @@ wercker.yml
 
 # misc
 *.md
+*.markdown
+RELEASING.*
+*.log

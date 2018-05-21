@@ -1,19 +1,31 @@
 {
   "name": "testwa",
   "private": true,
-  "version": "0.0.21",
+  "version": "0.1.0",
   "description": "testwa desktop app",
   "author": "canfeit <canfeit@qq.com> (http://testwa.com/)",
   "license": "MIT",
   "keywords": ["testwa", "appium"],
+  "tags": [
+    "testwa",
+    "appium",
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
   "homepage": "https://github.com/canfeit/testwa#readme",
   "scripts": {
     "start": "electron-webpack dev",
-    "compile": "electron-webpack",
     "package": "yarn compile && build --publish always",
     "package-all": "yarn compile && build -mwl",
     "package-linux": "yarn compile && build --linux",
     "package-win": "yarn compile && build --win --x64",
+    "compile": "electron-webpack",
     "preinstall": "conda activate py2",
     "prepackage": "standard-version&&git push --follow-tags"
   },
@@ -21,19 +33,16 @@
     "productName": "testwa录制工具",
     "appId": "com.testwa.desktop",
     "copyright": "Copyright © 2018 testwa",
+    "files": [
+      "testwa/**/*.js",
+      "!**/{LICENSE,LICENCE,license,CHANGELOG,*LICENSE,LICENSE*,AUTHORS,.gitmodules}",
+      "!**/*.{png,jpg,gif,map,un~}"
+    ],
     "extraResources": [
-      {
-        "from": "static/minicap/libs",
-        "to": "static/minicap/libs"
-      },
-      {
-        "from": "static/minicap/jni/minicap-shared/aosp/libs",
-        "to": "static/minicap/jni/minicap-shared/aosp/libs"
-      },
-      {
-        "from": "static/minitouch/libs",
-        "to": "static/minitouch/libs"
-      }
+      "static/files",
+      "static/minicap/libs",
+      "static/minicap/jni/minicap-shared/aosp/libs",
+      "static/minitouch/libs"
     ],
     "dmg": {
       "contents": [
@@ -70,22 +79,24 @@
   "dependencies": {
     "adbkit": ">=2.11.0",
     "appium": ">=1.8.0",
-    "appium-adb": ">=6.9.1",
-    "electron-log": ">=2.2.14",
+    "appium-adb": "^6.9.4",
     "electron-updater": "^2.21.10",
     "emailjs-utf7": ">=4.0.1",
-    "minicap": ">=0.2.0-0",
-    "source-map-support": ">=0.5.5"
+    "minicap": "^0.2.1-0",
+    "source-map-support": "^0.5.6"
   },
   "devDependencies": {
-    "@babel/preset-react": ">=7.0.0-beta.46",
-    "electron": "",
-    "electron-builder": ">=20.13.3",
-    "electron-webpack": "",
+    "@babel/preset-react": "^7.0.0-beta.47",
+    "@material-ui/core": "^1.0.0",
+    "electron": "2.0.1",
+    "electron-builder": "20.14.0",
+    "electron-webpack": "2.1.1",
     "react": "",
     "react-dom": "",
-    "react-hot-loader": ">=4.1.3",
     "standard-version": "",
-    "webpack": ""
+    "styletron-engine-atomic": ">=1.0.5",
+    "styletron-react": ">=4.2.1",
+    "wd": "^1.7.0",
+    "webpack": ">=4.8.3"
   }
 }
