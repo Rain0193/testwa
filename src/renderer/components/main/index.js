@@ -8,11 +8,6 @@ class App extends Component {
   constructor() {
     // @ts-ignore
     super();
-    const { fork } = require("child_process");
-    const server = remote.process.defaultApp
-      ? fork(`${__dirname}/../../../../testwa/start_cp`)
-      : fork(`${__dirname}/testwa/start_cp`);
-    server.on("message", msg => console);
     this.state = { devices: [] };
   }
   componentWillMount() {
@@ -38,7 +33,10 @@ class App extends Component {
       title: "脚本录制"
       // titleBarStyle: "hiddenInset"
     });
+    const { fork } = require("child_process");
+    let server;
     if (remote.process.defaultApp) {
+      server = fork(`${__dirname}/../../../../testwa/start_cp`);
       sessionWin.webContents.openDevTools();
       sessionWin.loadURL(
         `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}?device=${
@@ -47,6 +45,7 @@ class App extends Component {
         }`
       );
     } else {
+      server = fork(`${__dirname}/testwa/start_cp`);
       sessionWin.loadURL(
         `file://${require("path").join(__dirname, "index.html")}?device=${
           // @ts-ignore
@@ -54,6 +53,7 @@ class App extends Component {
         }`
       );
     }
+    server.on("message", msg => console.log);
     sessionWin.show();
   }
   render() {
