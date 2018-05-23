@@ -1,27 +1,27 @@
 #!/usr/bin/env node
 // transpile:testwa
-const _ =require( 'lodash');
-const path =require( "path");
-const { fs, mkdirp, util, logger } =require( "appium-support");
-const { retry } =require( "asyncbox");
-const battery =require( "./battery");
+const _ = require("lodash");
+const path = require("path");
+const { fs, mkdirp, util, logger } = require("appium-support");
+const { retry } = require("asyncbox");
+const battery = require("./battery");
 
-let log = logger.getLogger('Testwa');
+let log = logger.getLogger("Testwa");
 let logData = logger.getLogger("TestWaData");
 
-let temp = require('temp')
-  , testwaresponse = require('./middleware.js')
-  , testData = require('./testcasedata.js')
-  , async = require('async')
-  , stringify = require('json-stringify-safe')
-  , querystring = require("querystring")
-  , endOfLine = require('os').EOL
-  , fse = require('fs-extra')
-  , fileSystem = require('fs')
-  , execSync = require('child_process').execSync
-  , spawnSync = require('child_process').spawnSync
-  ,exec = require('child_process').exec
-  , spawn = require('child_process').spawn
+let temp = require("temp"),
+  testwaresponse = require("./middleware.js"),
+  testData = require("./testcasedata.js"),
+  async = require("async"),
+  stringify = require("json-stringify-safe"),
+  querystring = require("querystring"),
+  endOfLine = require("os").EOL,
+  fse = require("fs-extra"),
+  fileSystem = require("fs"),
+  execSync = require("child_process").execSync,
+  spawnSync = require("child_process").spawnSync,
+  exec = require("child_process").exec,
+  spawn = require("child_process").spawn;
 
 let testwa = {};
 Object.assign(testwa, battery);
@@ -29,11 +29,11 @@ let testSuit = "";
 let testcaseId = "";
 let executionTaskId = "";
 let deviceid = "";
-let reportPath = '';
-let reportRelativePath = '../../../../../../report';
-let reportListName = 'reportList';
-let reportFileName = 'Test';
-let reportFile = 'Test0';
+let reportPath = "";
+let reportRelativePath = "../../../../../../report";
+let reportListName = "reportList";
+let reportFileName = "Test";
+let reportFile = "Test0";
 
 function lineCount(file) {
   let data = fileSystem.readFileSync(file);
@@ -41,17 +41,20 @@ function lineCount(file) {
 }
 
 function getReportFileName(reportPath, reportListName) {
-  return fileSystem.existsSync(reportPath + '/resources/' + reportListName + '.json') ?
-    reportFileName + lineCount(reportPath + '/resources/' + reportListName + '.json') :
-    reportFileName + 0;
+  return fileSystem.existsSync(
+    reportPath + "/resources/" + reportListName + ".json"
+  )
+    ? reportFileName +
+        lineCount(reportPath + "/resources/" + reportListName + ".json")
+    : reportFileName + 0;
 }
 
 function initReportPath(driver) {
-  reportPath = driver.args.reportPath ?
-    driver.args.reportPath :
-    path.resolve(__dirname, reportRelativePath);
+  reportPath = driver.args.reportPath
+    ? driver.args.reportPath
+    : path.resolve(__dirname, reportRelativePath);
 }
-testwa.initBaseDriver = function (driver) {
+testwa.initBaseDriver = function(driver) {
   //driver = android driver or ios
   initReportPath(driver);
 
@@ -67,7 +70,10 @@ testwa.initBaseDriver = function (driver) {
   let startTime = date.getTime();
   reportEntity.sessionStartTime = startTime;
   date = new Date(startTime);
-  let startTimeStr = date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+  let startTimeStr = date
+    .toISOString()
+    .replace(/T/, " ")
+    .replace(/\..+/, "");
   reportList.sessionStartTime = startTimeStr;
   reportList.deviceName = caps.deviceName;
   reportList.apkName = caps.appPackage;
@@ -77,9 +83,9 @@ testwa.initBaseDriver = function (driver) {
 
   reportFile = getReportFileName(reportPath, reportListName);
   reportList.fileName = reportFile;
-  let listTemplatePath = path.resolve(__dirname, 'listTemplate');
+  let listTemplatePath = path.resolve(__dirname, "listTemplate");
   //copy listTemplate if not exist
-  if (!fileSystem.existsSync(reportPath + '/index.html')) {
+  if (!fileSystem.existsSync(reportPath + "/index.html")) {
     // let listTemplatePath = path.resolve(__dirname, 'listTemplate');
     // ncp(listTemplatePath, reportPath, function (err) {
     //     if (err) {return log.error(err);}
@@ -87,33 +93,44 @@ testwa.initBaseDriver = function (driver) {
     try {
       fse.copySync(listTemplatePath, reportPath);
     } catch (err) {
-      log.error(err)
+      log.error(err);
     }
   }
   //copy template to reportpath
-  let templatePath = path.resolve(__dirname, 'template');
+  let templatePath = path.resolve(__dirname, "template");
   // ncp(templatePath, reportPath+'/'+reportFile, function (err) {
   //     if (err) {return log.error(err);}
   //     //init reportSteps.js
   //     fileSystem.writeFileSync(reportPath+'/'+reportFile+'/resources/reportSteps.js','var reportSteps = [ ');
   // });
   try {
-    fse.copySync(templatePath, reportPath + '/' + reportFile);
-    fileSystem.writeFileSync(reportPath + '/' + reportFile + '/resources/reportSteps.js', 'var reportSteps = [ ');
+    fse.copySync(templatePath, reportPath + "/" + reportFile);
+    fileSystem.writeFileSync(
+      reportPath + "/" + reportFile + "/resources/reportSteps.js",
+      "var reportSteps = [ "
+    );
   } catch (err) {
-    log.error(err)
+    log.error(err);
   }
 };
 
-testwa.responseNoDriver = function (driver, req, httpStatus, httpResBody, commond, jsonObj) {
+testwa.responseNoDriver = function(
+  driver,
+  req,
+  httpStatus,
+  httpResBody,
+  commond,
+  jsonObj
+) {
   let args = driver.args;
 
   let testDataReply = _.cloneDeep(testData);
-  testDataReply.testdata.description = "No Driver found for this session, probably appium error, please restart appium!";
+  testDataReply.testdata.description =
+    "No Driver found for this session, probably appium error, please restart appium!";
   if (args.genTool) {
     logData.error(stringify(testDataReply));
   } else {
-    testwaresponse.SendDataNativeApp(testDataReply.testdata, args.portal)
+    testwaresponse.SendDataNativeApp(testDataReply.testdata, args.portal);
   }
 };
 
@@ -124,28 +141,61 @@ function generateReportFinish(driver) {
   let date = new Date();
   let endTime = date.getTime();
   reportEntity.sessionEndTime = endTime;
-  reportSummary.sessionTotalTime = reportEntity.sessionEndTime - reportEntity.sessionStartTime;
+  reportSummary.sessionTotalTime =
+    reportEntity.sessionEndTime - reportEntity.sessionStartTime;
 
   //reportSteps.js
-  fileSystem.appendFileSync(reportPath + '/' + reportFile + '/resources/reportSteps.js', '];');
+  fileSystem.appendFileSync(
+    reportPath + "/" + reportFile + "/resources/reportSteps.js",
+    "];"
+  );
 
   //reportSummary.js
-  let summaryJs = 'var reportSummary = ' + stringify(reportSummary) + ' ;';
-  fileSystem.writeFileSync(reportPath + '/' + reportFile + '/resources/reportSummary.js', summaryJs);
-  fileSystem.writeFileSync(reportPath + '/' + reportFile + '/resources/reportSummary.json', stringify(reportSummary));
+  let summaryJs = "var reportSummary = " + stringify(reportSummary) + " ;";
+  fileSystem.writeFileSync(
+    reportPath + "/" + reportFile + "/resources/reportSummary.js",
+    summaryJs
+  );
+  fileSystem.writeFileSync(
+    reportPath + "/" + reportFile + "/resources/reportSummary.json",
+    stringify(reportSummary)
+  );
 
   //write reportList.json
   reportList.result = reportSummary.result;
   reportList.sessionTotalTime = reportSummary.sessionTotalTime;
-  fileSystem.appendFileSync(reportPath + '/resources/' + reportListName + '.json', JSON.stringify(reportList) + endOfLine);
+  fileSystem.appendFileSync(
+    reportPath + "/resources/" + reportListName + ".json",
+    JSON.stringify(reportList) + endOfLine
+  );
   //write reportList.js
-  let reportListJs = '';
-  reportListJs = fileSystem.readFileSync(reportPath + '/resources/' + reportListName + '.js', 'utf8');
-  reportListJs = reportListJs.replace('var reportLists = [' + endOfLine, 'var reportLists = [' + endOfLine + JSON.stringify(reportList) + ',' + endOfLine);
-  fileSystem.writeFileSync(reportPath + '/resources/' + reportListName + '.js', reportListJs);
-};
+  let reportListJs = "";
+  reportListJs = fileSystem.readFileSync(
+    reportPath + "/resources/" + reportListName + ".js",
+    "utf8"
+  );
+  reportListJs = reportListJs.replace(
+    "var reportLists = [" + endOfLine,
+    "var reportLists = [" +
+      endOfLine +
+      JSON.stringify(reportList) +
+      "," +
+      endOfLine
+  );
+  fileSystem.writeFileSync(
+    reportPath + "/resources/" + reportListName + ".js",
+    reportListJs
+  );
+}
 
-testwa.responseDeleteSession = async function (driver, req, httpStatus, httpResBody, commond, jsonObj) {
+testwa.responseDeleteSession = async function(
+  driver,
+  req,
+  httpStatus,
+  httpResBody,
+  commond,
+  jsonObj
+) {
   let testDataReply = _.cloneDeep(testData);
   testDataReply.testdata.status = 0;
   testDataReply.testdata.value = httpResBody.value;
@@ -155,11 +205,14 @@ testwa.responseDeleteSession = async function (driver, req, httpStatus, httpResB
   testDataReply.testdata.testSuit = testSuit;
   testDataReply.testdata.testcaseId = testcaseId;
   testDataReply.testdata.executionTaskId = executionTaskId;
-  testDataReply.testdata.command = { "action": "停止测试", "params": "" };
+  testDataReply.testdata.command = { action: "停止测试", params: "" };
   testDataReply.testdata.screenshotPath = "";
 
   if (driver.battery) {
-    [testDataReply.testdata.battery, testDataReply.testdata.network] = testwa.getBatteryStatsDeleteSession(driver);
+    [
+      testDataReply.testdata.battery,
+      testDataReply.testdata.network
+    ] = testwa.getBatteryStatsDeleteSession(driver);
     //reset battery info
     driver.battery = null;
   }
@@ -169,7 +222,9 @@ testwa.responseDeleteSession = async function (driver, req, httpStatus, httpResB
   testDataReply.testdata.runtime = endTime - req._startTime.getTime();
   testDataReply.testdata.status = httpResBody.status;
   if (null !== httpResBody.value) {
-    testDataReply.description = httpResBody.value.message ? httpResBody.value.message : "";
+    testDataReply.description = httpResBody.value.message
+      ? httpResBody.value.message
+      : "";
   }
 
   let args = driver.args;
@@ -192,7 +247,14 @@ testwa.responseDeleteSession = async function (driver, req, httpStatus, httpResB
     }
   }
 };
-testwa.responseIOSCompatibilityTest = function (driver, req, httpStatus, httpResBody, command, jsonObj) {
+testwa.responseIOSCompatibilityTest = function(
+  driver,
+  req,
+  httpStatus,
+  httpResBody,
+  command,
+  jsonObj
+) {
   let osDriver = driver.sessions[httpResBody.sessionId];
 
   let testDataReply = _.clone(testData);
@@ -204,81 +266,140 @@ testwa.responseIOSCompatibilityTest = function (driver, req, httpStatus, httpRes
   testDataReply.testdata.testSuit = testSuit;
   testDataReply.testdata.testcaseId = testcaseId;
   testDataReply.testdata.executionTaskId = executionTaskId;
-  testDataReply.testdata.command = { "action": "安装应用", "params": `安装本地应用 ：${osDriver.caps.app}` };
+  testDataReply.testdata.command = {
+    action: "安装应用",
+    params: `安装本地应用 ：${osDriver.caps.app}`
+  };
   testDataReply.testdata.screenshotPath = "";
   // install app time
   testDataReply.testdata.runtime = osDriver.installAppTime;
   testwaresponse.SendDataNativeApp(testDataReply.testdata, driver.args.portal);
   // start app time
-  testDataReply.testdata.command = { "action": "启动应用", "params": `启动应用 ：${osDriver.caps.bundleId}` };
+  testDataReply.testdata.command = {
+    action: "启动应用",
+    params: `启动应用 ：${osDriver.caps.bundleId}`
+  };
   testDataReply.testdata.runtime = osDriver.startAppTime;
   testwaresponse.SendDataNativeApp(testDataReply.testdata, driver.args.portal);
 };
 
-testwa.handler = async function (driver, req, httpStatus, httpResBody, command, jsonObj) {
+testwa.handler = async function(
+  driver,
+  req,
+  httpStatus,
+  httpResBody,
+  command,
+  jsonObj
+) {
   let osDriver = driver.sessions[httpResBody.sessionId];
   if (osDriver && command) {
-    if (command !== 'createSession') {
+    if (command !== "createSession") {
       let platformName = osDriver.caps.platformName.toLowerCase();
-      if ('android' === platformName) {
+      if ("android" === platformName) {
         //Android device
-        log.debug('Testwa android device handler');
-        await testwa.getActionAndroid(driver, req, httpStatus, httpResBody, command, jsonObj);
-      }
-      else if ('ios' === platformName) {
+        log.debug("Testwa android device handler");
+        await testwa.getActionAndroid(
+          driver,
+          req,
+          httpStatus,
+          httpResBody,
+          command,
+          jsonObj
+        );
+      } else if ("ios" === platformName) {
         //IOS device
-        log.debug('Testwa ios device handler');
-        await testwa.getActionIOS(driver, req, httpStatus, httpResBody, command, jsonObj);
+        log.debug("Testwa ios device handler");
+        await testwa.getActionIOS(
+          driver,
+          req,
+          httpStatus,
+          httpResBody,
+          command,
+          jsonObj
+        );
+      } else {
+        log.debug("Testwa no supported device : " + platformName);
       }
-      else {
-        log.debug('Testwa no supported device : ' + platformName);
-      }
-    } else if (command === 'createSession') {
+    } else if (command === "createSession") {
       //createSession
       //mkdir -p for screenshot path
       await mkdirp(driver.args.screenshotPath);
       let platformName = osDriver.caps.platformName.toLowerCase();
-      log.debug('Create Session!');
-      if ('android' === platformName && (osDriver.caps.batteryStats || driver.args.batteryStats) && command === 'createSession') {
+      log.debug("Create Session!");
+      if (
+        "android" === platformName &&
+        (osDriver.caps.batteryStats || driver.args.batteryStats) &&
+        command === "createSession"
+      ) {
         testwa.initBatteryStatsAndroid(driver, osDriver);
       } else if (osDriver.caps.compatibilityTest) {
         // ios xcuitest compatibility test get start app time and install app time here and report to server
-        testwa.responseIOSCompatibilityTest(driver, req, httpStatus, httpResBody, command, jsonObj);
+        testwa.responseIOSCompatibilityTest(
+          driver,
+          req,
+          httpStatus,
+          httpResBody,
+          command,
+          jsonObj
+        );
       }
     }
-  } else if (command === 'deleteSession') {
+  } else if (command === "deleteSession") {
     //deleteSession
-    log.debug('Delete Session!');
-    await testwa.responseDeleteSession(driver, req, httpStatus, httpResBody, command, jsonObj);
+    log.debug("Delete Session!");
+    await testwa.responseDeleteSession(
+      driver,
+      req,
+      httpStatus,
+      httpResBody,
+      command,
+      jsonObj
+    );
   } else if (!command) {
     //No command here probably checking status, so skip
-    log.debug('No command here so skip!')
+    log.debug("No command here so skip!");
   } else {
     //no driver found , response error
-    log.debug('No Android/IOSDriver found here! Please restart Appium!');
-    testwa.responseNoDriver(driver, req, httpStatus, httpResBody, command, jsonObj);
+    log.debug("No Android/IOSDriver found here! Please restart Appium!");
+    testwa.responseNoDriver(
+      driver,
+      req,
+      httpStatus,
+      httpResBody,
+      command,
+      jsonObj
+    );
   }
 };
 
 //Android driver
-testwa.getTranslationAction = function (commond, jsonObj) {
+testwa.getTranslationAction = function(commond, jsonObj) {
   if (commond === "createSession") {
     return ["创建会话", ""];
   } else if (commond === "findElements") {
-    if ('byName' === jsonObj.mode) {
+    if ("byName" === jsonObj.mode) {
       return ["查找元素（by name）", jsonObj.value];
     }
     return ["查找元素（" + jsonObj.using + "）", jsonObj.value];
   } else if (commond === "findElement") {
-    if ('check' === jsonObj.mode) {
-      return ["检查元素（" + jsonObj.using + "）", jsonObj.value, jsonObj.mode, jsonObj.note];
-    } else if ('byName' === jsonObj.mode) {
+    if ("check" === jsonObj.mode) {
+      return [
+        "检查元素（" + jsonObj.using + "）",
+        jsonObj.value,
+        jsonObj.mode,
+        jsonObj.note
+      ];
+    } else if ("byName" === jsonObj.mode) {
       return ["查找元素（by name）", jsonObj.value];
     }
     return ["查找元素（" + jsonObj.using + "）", jsonObj.value];
   } else if (commond === "click") {
     return ["点击", ""];
-  } else if (commond === "setValue" || commond === "setValueImmediate" || commond === "inputValue") {
+  } else if (
+    commond === "setValue" ||
+    commond === "setValueImmediate" ||
+    commond === "inputValue"
+  ) {
     return ["输入", jsonObj.value];
   } else if (commond === "pressKeyCode") {
     return ["输入", `输入keycode: ${jsonObj.keycode}`];
@@ -291,7 +412,10 @@ testwa.getTranslationAction = function (commond, jsonObj) {
       let action = jsonObj.actions[0];
       if (action.action === "longPress") {
         let options = action.options;
-        return ["长按", "(x:" + options.x + ",y:" + options.y + ")" + options.duration + " ms"];
+        return [
+          "长按",
+          "(x:" + options.x + ",y:" + options.y + ")" + options.duration + " ms"
+        ];
       } else if (action.action === "tap") {
         let options = action.options;
         return ["点击", "(x:" + options.x + ",y:" + options.y + ")"];
@@ -302,21 +426,42 @@ testwa.getTranslationAction = function (commond, jsonObj) {
       if (action1.action === "press" && action3.action === "moveTo") {
         let options1 = action1.options;
         let options3 = action3.options;
-        return ["滑屏", "从(x:" + options1.x + ",y:" + options1.y + ")到(x:" + options3.x + ",y:" + options3.y + ")"];
+        return [
+          "滑屏",
+          "从(x:" +
+            options1.x +
+            ",y:" +
+            options1.y +
+            ")到(x:" +
+            options3.x +
+            ",y:" +
+            options3.y +
+            ")"
+        ];
       }
     }
   } else if (commond === "installApp") {
     return ["安装应用", `安装本地应用 ：${jsonObj.appPath}`];
-  } else if (commond === "startActivity") {
+  } else if (commond === "startActivity" || commond === "launchApp") {
     return ["启动应用", `启动应用 ： ${jsonObj.appPackage}`];
   } else if (commond === "removeApp") {
     return ["卸载应用", `卸载应用 ：${jsonObj.appId}`];
   }
 
-
   return [commond, jsonObj.value];
 };
-testwa.genRsp = function (driver, req, httpStatus, httpResBody, action, param, commandMode, commandNotes, cpuRate, memoryInfo) {
+testwa.genRsp = function(
+  driver,
+  req,
+  httpStatus,
+  httpResBody,
+  action,
+  param,
+  commandMode,
+  commandNotes,
+  cpuRate,
+  memoryInfo
+) {
   let Driver = driver.sessions[httpResBody.sessionId];
   let caps = Driver.caps;
   let args = driver.args;
@@ -331,8 +476,10 @@ testwa.genRsp = function (driver, req, httpStatus, httpResBody, action, param, c
   testDataReply.testdata.deviceId = deviceid = caps ? caps.deviceName : "";
   testDataReply.testdata.testSuit = testSuit = caps ? caps.testSuit : "";
   testDataReply.testdata.testcaseId = testcaseId = caps ? caps.testcaseId : "";
-  testDataReply.testdata.executionTaskId = executionTaskId = caps ? caps.executionTaskId : "";
-  testDataReply.testdata.command = { "action": action, "params": param };
+  testDataReply.testdata.executionTaskId = executionTaskId = caps
+    ? caps.executionTaskId
+    : "";
+  testDataReply.testdata.command = { action: action, params: param };
   if (commandMode) {
     testDataReply.testdata.command.mode = commandMode;
   }
@@ -350,14 +497,16 @@ testwa.genRsp = function (driver, req, httpStatus, httpResBody, action, param, c
 
   testDataReply.testdata.status = httpResBody.status;
   if (null !== httpResBody.value) {
-    testDataReply.testdata.description = httpResBody.value.message ? httpResBody.value.message : "";
+    testDataReply.testdata.description = httpResBody.value.message
+      ? httpResBody.value.message
+      : "";
   }
 
   return [testDataReply, endTime];
 };
 
 //use another way getting logcat
-testwa.outputLogcat = function (Driver) {
+testwa.outputLogcat = function(Driver) {
   let adb = Driver.adb;
   if (adb && querystring.stringify(adb.logcat) !== null) {
     console.log("[to-server-logcat-start]");
@@ -369,15 +518,22 @@ testwa.outputLogcat = function (Driver) {
 function generateReportSteps(testDataReply, tempPng) {
   testDataReply.testdata.screenshotPath = tempPng;
   let jsonStr = stringify(testDataReply);
-  fileSystem.appendFileSync(reportPath + '/' + reportFile + '/resources/reportSteps.json', jsonStr + endOfLine);
-  fileSystem.appendFileSync(reportPath + '/' + reportFile + '/resources/reportSteps.js', jsonStr + ',' + endOfLine);
+  fileSystem.appendFileSync(
+    reportPath + "/" + reportFile + "/resources/reportSteps.json",
+    jsonStr + endOfLine
+  );
+  fileSystem.appendFileSync(
+    reportPath + "/" + reportFile + "/resources/reportSteps.js",
+    jsonStr + "," + endOfLine
+  );
 }
 
 function reportReply(report, testDataReply, tempPng) {
   if (report) {
     generateReportSteps(testDataReply, tempPng);
-    testDataReply.testdata.status == 0 ? null :
-      driver.reportEntity.reportSummary.result = 1;
+    testDataReply.testdata.status == 0
+      ? null
+      : (driver.reportEntity.reportSummary.result = 1);
   }
 }
 function replyAction(driver, args, testDataReply, tempPng) {
@@ -395,18 +551,41 @@ function replyAction(driver, args, testDataReply, tempPng) {
   }
 }
 
-testwa.getActionAndroid = async function (driver, req, httpStatus, httpResBody, command, jsonObj) {
+testwa.getActionAndroid = async function(
+  driver,
+  req,
+  httpStatus,
+  httpResBody,
+  command,
+  jsonObj
+) {
   let Driver = driver.sessions[httpResBody.sessionId];
   let caps = Driver.caps;
   let args = driver.args;
 
-  let [action, param, commandMode, commandNotes] = this.getTranslationAction(command, jsonObj);
+  let [action, param, commandMode, commandNotes] = this.getTranslationAction(
+    command,
+    jsonObj
+  );
 
   let [memoryInfo, cpuRate] = await this.getPerformance(Driver, httpResBody);
 
-  let [testDataReply, endTime] = testwa.genRsp(driver, req, httpStatus, httpResBody, action, param, commandMode, commandNotes, cpuRate, memoryInfo);
+  let [testDataReply, endTime] = testwa.genRsp(
+    driver,
+    req,
+    httpStatus,
+    httpResBody,
+    action,
+    param,
+    commandMode,
+    commandNotes,
+    cpuRate,
+    memoryInfo
+  );
 
-  let screenshotPath = caps.screenshotPath ? caps.screenshotPath : args.screenshotPath;
+  let screenshotPath = caps.screenshotPath
+    ? caps.screenshotPath
+    : args.screenshotPath;
   let tempPng = screenshotPath + "/" + endTime + ".png";
   await testwa.getScreenshotAndroid(Driver, tempPng);
   testDataReply.testdata.screenshotPath = endTime + ".png";
@@ -414,34 +593,62 @@ testwa.getActionAndroid = async function (driver, req, httpStatus, httpResBody, 
   replyAction(driver, args, testDataReply, tempPng);
 };
 
-testwa.getActionIOS = async function (driver, req, httpStatus, httpResBody, commond, jsonObj) {
+testwa.getActionIOS = async function(
+  driver,
+  req,
+  httpStatus,
+  httpResBody,
+  commond,
+  jsonObj
+) {
   //only difference between ios and android is not getting performance.
   let Driver = driver.sessions[httpResBody.sessionId];
   let caps = Driver.caps;
   let args = driver.args;
 
-  let [action, param, commandMode, commandNotes] = this.getTranslationAction(commond, jsonObj);
+  let [action, param, commandMode, commandNotes] = this.getTranslationAction(
+    commond,
+    jsonObj
+  );
 
-  let [testDataReply, endTime] = testwa.genRsp(driver, req, httpStatus, httpResBody, action, param, commandMode, commandNotes, 0, 0);
-  let screenshotPath = caps.screenshotPath ? caps.screenshotPath : args.screenshotPath;
+  let [testDataReply, endTime] = testwa.genRsp(
+    driver,
+    req,
+    httpStatus,
+    httpResBody,
+    action,
+    param,
+    commandMode,
+    commandNotes,
+    0,
+    0
+  );
+  let screenshotPath = caps.screenshotPath
+    ? caps.screenshotPath
+    : args.screenshotPath;
   let mode = Driver.caps.automationName.toLowerCase();
-  if (mode === 'xcuitest') {
-    log.debug("Screen shot with XCUITest!")
-    await this.getXcuitestScreenshot(Driver, screenshotPath, httpResBody.sessionId, endTime);
+  if (mode === "xcuitest") {
+    log.debug("Screen shot with XCUITest!");
+    await this.getXcuitestScreenshot(
+      Driver,
+      screenshotPath,
+      httpResBody.sessionId,
+      endTime
+    );
   } else {
     // let tempPng = screenshotPath + "/" + endTime + ".png";
     // await testwa.getScreenshotIOS(Driver,screenshotPath, endTime+".png");
-    log.debug("No support for none XCUITest mode yet!")
+    log.debug("No support for none XCUITest mode yet!");
   }
   testDataReply.testdata.screenshotPath = endTime + ".png";
 
-  let tempPng = screenshotPath + '/' + endTime + ".png";
+  let tempPng = screenshotPath + "/" + endTime + ".png";
 
-  replyAction(driver, args, testDataReply, tempPng)
+  replyAction(driver, args, testDataReply, tempPng);
 };
 
 //get memoryinfo and cpurate
-testwa.getPerformance = async function (androidDriver, httpResBody) {
+testwa.getPerformance = async function(androidDriver, httpResBody) {
   log.debug("Getting device memeory and cpu cost!");
   let adb = androidDriver.adb;
   let caps = androidDriver.caps;
@@ -453,9 +660,9 @@ testwa.getPerformance = async function (androidDriver, httpResBody) {
     let memarray = out.match(reg_MEM);
     let tmpcpurate = out.match(reg_CPU);
     let memoryinfo = memarray[1];
-    memoryinfo = memoryinfo.replace('K', '');
+    memoryinfo = memoryinfo.replace("K", "");
     let cpurate = tmpcpurate[0];
-    cpurate = cpurate.replace('%', '');
+    cpurate = cpurate.replace("%", "");
     return [memoryinfo, cpurate];
   } catch (e) {
     log.debug("Error Getting cpu and memory info!");
@@ -464,9 +671,9 @@ testwa.getPerformance = async function (androidDriver, httpResBody) {
   }
 };
 
-testwa.getScreenshotAndroid = async function (androidDriver, tempPng) {
-  const png = '/data/local/tmp/screenshot.png';
-  let cmd = ['/system/bin/rm', `${png};`, '/system/bin/screencap', '-p', png];
+testwa.getScreenshotAndroid = async function(androidDriver, tempPng) {
+  const png = "/data/local/tmp/screenshot.png";
+  let cmd = ["/system/bin/rm", `${png};`, "/system/bin/screencap", "-p", png];
   await androidDriver.adb.shell(cmd);
   if (await fs.exists(tempPng)) {
     await fs.unlink(tempPng);
@@ -474,17 +681,31 @@ testwa.getScreenshotAndroid = async function (androidDriver, tempPng) {
   await androidDriver.adb.pull(png, tempPng);
 };
 
-testwa.getXcuitestScreenshot = async function (Driver, screenshotPath, sessionId, endTime) {
-  let [response, body] = await Driver.wda.jwproxy.proxy('/wd/hub/session/' + sessionId + '/screenshot', 'get', null);
+testwa.getXcuitestScreenshot = async function(
+  Driver,
+  screenshotPath,
+  sessionId,
+  endTime
+) {
+  let [response, body] = await Driver.wda.jwproxy.proxy(
+    "/wd/hub/session/" + sessionId + "/screenshot",
+    "get",
+    null
+  );
   body = util.safeJsonParse(body);
-  await fs.writeFile(screenshotPath + "/" + endTime + ".png", body.value, 'base64', (err) => {
-    if (err) {
-      log.error(err);
-    };
-  });
+  await fs.writeFile(
+    screenshotPath + "/" + endTime + ".png",
+    body.value,
+    "base64",
+    err => {
+      if (err) {
+        log.error(err);
+      }
+    }
+  );
 };
 
-testwa.getScreenshotIOS = async function (Driver, screenshotPath, filename) {
+testwa.getScreenshotIOS = async function(Driver, screenshotPath, filename) {
   // let guid = uuid.create();
   // let shotFile = `screenshot${guid}`;
 
@@ -501,11 +722,13 @@ testwa.getScreenshotIOS = async function (Driver, screenshotPath, filename) {
     await this.uiAutoClient.sendCommand(`au.capture('${shotFile}')`);
 
     let screenshotWaitTimeout = (this.opts.screenshotWaitTimeout || 10) * 1000;
-    log.debug(`Waiting ${screenshotWaitTimeout} ms for screenshot to be generated.`);
+    log.debug(
+      `Waiting ${screenshotWaitTimeout} ms for screenshot to be generated.`
+    );
     let startMs = Date.now();
 
     let success = false;
-    while ((Date.now() - startMs) < screenshotWaitTimeout) {
+    while (Date.now() - startMs < screenshotWaitTimeout) {
       if (await fs.hasAccess(shotPath)) {
         success = true;
         break;
@@ -513,12 +736,12 @@ testwa.getScreenshotIOS = async function (Driver, screenshotPath, filename) {
       await B.delay(300);
     }
     if (!success) {
-      throw new Error('Timed out waiting for screenshot file');
+      throw new Error("Timed out waiting for screenshot file");
     }
 
     // check the rotation, and rotate if necessary
-    if (await this.getOrientation() === 'LANDSCAPE') {
-      log.debug('Rotating landscape screenshot');
+    if ((await this.getOrientation()) === "LANDSCAPE") {
+      log.debug("Rotating landscape screenshot");
       // await utils.rotateImage(shotPath, -90);
     }
 
@@ -532,39 +755,54 @@ testwa.getScreenshotIOS = async function (Driver, screenshotPath, filename) {
     try {
       fse.copySync(temp, shotFolder);
     } catch (err) {
-      log.error(err)
+      log.error(err);
     }
 
     return;
   };
 };
 
-testwa.beforeExecuteCommand = function (driver, sessionId, command) {
+testwa.beforeExecuteCommand = function(driver, sessionId, command) {
   let osDriver = driver.sessions[sessionId];
 
   //for removeApp
-  if (command === 'removeApp' && (osDriver.caps.batteryStats || driver.args.batteryStats) && driver.battery && osDriver) {
+  if (
+    command === "removeApp" &&
+    (osDriver.caps.batteryStats || driver.args.batteryStats) &&
+    driver.battery &&
+    osDriver
+  ) {
     let platformName = osDriver.caps.platformName.toLowerCase();
     // get batterystats before app is removed for android
-    if ('android' === platformName) {
+    if ("android" === platformName) {
       //Android device
       testwa.adbDumpBatterystats(driver, driver.battery.android.adbPath, true);
     }
   }
 };
 testwa.startLogcat = function startLogcat(adb, deviceLogPath, sessionId) {
-  let adbPath = adb.sdkRoot + '/platform-tools/adb';
+  let adbPath = adb.sdkRoot + "/platform-tools/adb";
   // log.debug(`adb path: ${adbPath}`);
   let logcatProcess;
   let logcatPath = deviceLogPath;
 
-  adb.shell(['logcat', '-c']);
+  adb.shell(["logcat", "-c"]);
 
-  logcatProcess = spawn(adbPath, ['-s', adb.curDeviceId, 'shell', 'logcat', '*:E']);
-  logcatProcess.stdout.on('data', function (data) {
-    fileSystem.appendFile(logcatPath + '/' + sessionId + '.log', data.toString(), function (err) {
-      if (err) throw err;
-    });
+  logcatProcess = spawn(adbPath, [
+    "-s",
+    adb.curDeviceId,
+    "shell",
+    "logcat",
+    "*:E"
+  ]);
+  logcatProcess.stdout.on("data", function(data) {
+    fileSystem.appendFile(
+      logcatPath + "/" + sessionId + ".log",
+      data.toString(),
+      function(err) {
+        if (err) throw err;
+      }
+    );
   });
   return logcatProcess;
 };

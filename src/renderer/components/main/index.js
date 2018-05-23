@@ -2,25 +2,24 @@ import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import { ipcRenderer, remote } from "electron";
 import "./devices.min.css";
-const client = require("adbkit").createClient();
 
 class App extends Component {
   constructor() {
     // @ts-ignore
     super();
-    this.state = { devices: [] };
+    this.state = {
+      devices: []
+    };
   }
   componentWillMount() {
     ipcRenderer.on("devices", (_event, devices) => {
       this.setState({ devices: devices });
     });
   }
-  async openDeviceWindow() {
+  openDeviceWindow() {
     // 本地端口转发
     // @ts-ignore
-    client.forward(this.id, "tcp:1717", "localabstract:minicap");
-    // @ts-ignore
-    client.forward(this.id, "tcp:1718", "localabstract:minitouch");
+    ipcRenderer.send("forward", this.id);
     // @ts-ignore
     const [width, height] = this.screen.split("x");
     let sessionWin = new remote.BrowserWindow({
@@ -33,27 +32,22 @@ class App extends Component {
       title: "脚本录制"
       // titleBarStyle: "hiddenInset"
     });
-    const { fork } = require("child_process");
-    let server;
     if (remote.process.defaultApp) {
-      server = fork(`${__dirname}/../../../../testwa/start_cp`);
-      sessionWin.webContents.openDevTools();
       sessionWin.loadURL(
         `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}?device=${
           // @ts-ignore
           this.id
         }`
       );
+      sessionWin.webContents.openDevTools();
     } else {
-      server = fork(`${__dirname}/testwa/start_cp`);
       sessionWin.loadURL(
-        `file://${require("path").join(__dirname, "index.html")}?device=${
+        `file://${__dirname}/index.html?device=${
           // @ts-ignore
           this.id
         }`
       );
     }
-    server.on("message", msg => console.log);
     sessionWin.show();
   }
   render() {

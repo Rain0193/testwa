@@ -1,10 +1,21 @@
+import { ipcMain } from "electron";
+import { SERVER_APK_PATH, TEST_APK_PATH } from "appium-uiautomator2-server";
+// @ts-ignore
+import { util, createClient } from "adbkit";
+export const client = createClient();
+ipcMain.on("forward", (_event, deviceID) => {
+  client.forward(deviceID, "tcp:1717", "localabstract:minicap");
+  // @ts-ignore
+  client.forward(deviceID, "tcp:1718", "localabstract:minitouch");
+  // @ts-ignore
+  client.forward(deviceID, "tcp:4444", "tcp:6790");
+});
 export default async window => {
-  const client = require("adbkit").createClient();
   const devices = await client.listDevices();
   const getDeviceProperties = async device => {
     const [properties, screen] = await Promise.all([
       client.getProperties(device.id),
-      require("adbkit").util.readAll(await client.shell(device.id, "wm size"))
+      util.readAll(await client.shell(device.id, "wm size"))
     ]);
     device.brand = properties["ro.product.brand"];
     device.model = properties["ro.product.model"];
@@ -15,7 +26,8 @@ export default async window => {
       .exec(screen)[1]
       .trim();
   };
-  const pushSTF2Device = async device => {
+  const push2Device = async device => {
+    // 推送服务到安卓
     await Promise.all([
       client.push(
         device.id,
@@ -39,9 +51,18 @@ export default async window => {
         }/${device.cpu}/minicap.so`,
         "/data/local/tmp/minicap.so",
         511
-      )
+      ),
+      (await client.isInstalled(device.id, "io.appium.uiautomator2.server"))
+        ? true
+        : client.install(device.id, SERVER_APK_PATH),
+      (await client.isInstalled(
+        device.id,
+        "io.appium.uiautomator2.server.test"
+      ))
+        ? true
+        : client.install(device.id, TEST_APK_PATH)
     ]);
-    // 启动手机端服务
+    // 启动安卓端服务
     client.shell(
       device.id,
       `LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/minicap -P ${
@@ -52,12 +73,16 @@ export default async window => {
         .join("x")}/0`
     );
     client.shell(device.id, `/data/local/tmp/minitouch`);
+    client.shell(
+      device.id,
+      `am instrument -w --no-window-animation io.appium.uiautomator2.server.test/android.support.test.runner.AndroidJUnitRunner`
+    );
   };
-  for (const device of devices) {
-    await getDeviceProperties(device);
-    pushSTF2Device(device);
-  }
+  const Promises = [];
+  for (const device of devices) Promises.push(getDeviceProperties(device));
+  await Promise.all(Promises);
   window.webContents.send("devices", devices);
+  for (const device of devices) push2Device(device);
   (await client.trackDevices()).on("changeSet", async changes => {
     for (const device of changes.removed) {
       let idx = devices.findIndex(e => e.id === device.id);
@@ -69,7 +94,7 @@ export default async window => {
       else {
         await getDeviceProperties(device);
         devices.push(device);
-        pushSTF2Device(device);
+        push2Device(device);
       }
     }
     window.webContents.send("devices", devices);

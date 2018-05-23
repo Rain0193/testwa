@@ -2,25 +2,32 @@
   "name": "testwa",
   "private": true,
   "version": "0.1.0",
-  "description": "testwa desktop app",
+  "description": "Automated test Script recording tool for Apps.",
   "author": "canfeit <canfeit@qq.com> (http://testwa.com/)",
   "license": "MIT",
-  "keywords": ["testwa", "appium"],
+  "keywords": [
+    "testwa",
+    "appium",
+    "selenium",
+    "webdriver",
+    "automation",
+    "testing"
+  ],
   "tags": [
     "testwa",
     "appium",
-    "automation",
-    "javascript",
     "selenium",
     "webdriver",
+    "automation",
+    "testing",
+    "javascript",
     "ios",
     "android",
-    "firefoxos",
-    "testing"
+    "firefoxos"
   ],
   "homepage": "https://github.com/canfeit/testwa#readme",
   "scripts": {
-    "start": "electron-webpack dev",
+    "start": "yarn upgrade -L && electron-webpack dev",
     "package": "yarn compile && build --publish always",
     "package-all": "yarn compile && build -mwl",
     "package-linux": "yarn compile && build --linux",
@@ -34,12 +41,10 @@
     "appId": "com.testwa.desktop",
     "copyright": "Copyright © 2018 testwa",
     "files": [
-      "testwa/**/*.js",
       "!**/{LICENSE,LICENCE,license,CHANGELOG,*LICENSE,LICENSE*,AUTHORS,.gitmodules}",
       "!**/*.{png,jpg,gif,map,un~}"
     ],
     "extraResources": [
-      "static/files",
       "static/minicap/libs",
       "static/minicap/jni/minicap-shared/aosp/libs",
       "static/minitouch/libs"
@@ -78,22 +83,20 @@
   },
   "dependencies": {
     "adbkit": ">=2.11.0",
-    "appium": ">=1.8.0",
-    "appium-adb": "^6.9.4",
-    "electron-updater": "^2.21.10",
-    "emailjs-utf7": ">=4.0.1",
-    "minicap": "^0.2.1-0",
     "source-map-support": "^0.5.6"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0-beta.47",
     "@material-ui/core": "^1.0.0",
-    "electron": "2.0.1",
-    "electron-builder": "20.14.0",
-    "electron-webpack": "2.1.1",
+    "appium-uiautomator2-server": "^1.12.0",
+    "electron": "2.0.2",
+    "electron-builder": "20.14.7",
+    "electron-updater": "^2.21.10",
+    "electron-webpack": "2.1.2",
+    "minicap": "^0.2.1-0",
     "react": "",
     "react-dom": "",
-    "standard-version": "",
+    "standard-version": "4.4.0",
     "styletron-engine-atomic": ">=1.0.5",
     "styletron-react": ">=4.2.1",
     "wd": "^1.7.0",

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import syncScreen from "./minicap";
-import MiniTouch from "./minitouch";
+import syncScreen from "./minicap_client";
+import MiniTouch from "./minitouch_client";
 
 class App extends Component {
   constructor() {
