@@ -1,5 +1,4 @@
 import { ipcMain } from "electron";
-import { SERVER_APK_PATH, TEST_APK_PATH } from "appium-uiautomator2-server";
 // @ts-ignore
 import { util, createClient } from "adbkit";
 export const client = createClient();
@@ -54,13 +53,21 @@ export default async window => {
       ),
       (await client.isInstalled(device.id, "io.appium.uiautomator2.server"))
         ? true
-        : client.install(device.id, SERVER_APK_PATH),
+        : client.install(
+            device.id,
+            // @ts-ignore
+            __static + "/apks/appium-uiautomator2-server-v1.12.0.apk"
+          ),
       (await client.isInstalled(
         device.id,
         "io.appium.uiautomator2.server.test"
       ))
         ? true
-        : client.install(device.id, TEST_APK_PATH)
+        : client.install(
+            device.id,
+            // @ts-ignore
+            __static + "/apks/appium-uiautomator2-server-debug-androidTest.apk"
+          )
     ]);
     // 启动安卓端服务
     client.shell(

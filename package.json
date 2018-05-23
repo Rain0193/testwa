@@ -45,6 +45,7 @@
       "!**/*.{png,jpg,gif,map,un~}"
     ],
     "extraResources": [
+      "static/apks",
       "static/minicap/libs",
       "static/minicap/jni/minicap-shared/aosp/libs",
       "static/minitouch/libs"
