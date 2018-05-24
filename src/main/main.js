@@ -1,3 +1,4 @@
+// @ts-check
 "use strict";
 import { app, Menu, BrowserWindow } from "electron";
 import menu from "./menu";
