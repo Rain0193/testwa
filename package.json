@@ -87,20 +87,24 @@
     "source-map-support": "^0.5.6"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.0.0-beta.47",
-    "@material-ui/core": "^1.0.0",
+    "@babel/preset-react": "^7.0.0-beta.49",
+    "@material-ui/core": "^1.1.0",
     "appium-uiautomator2-server": "^1.12.0",
+    "axios": "^0.18.0",
     "electron": "^2.0.2",
-    "electron-builder": "^20.14.7",
+    "electron-builder": "^20.15.1",
     "electron-updater": "^2.21.10",
     "electron-webpack": "^2.1.2",
     "minicap": "^0.2.1-0",
+    "moment": "^2.22.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
+    "request": "^2.87.0",
     "standard-version": "^4.4.0",
     "styletron-engine-atomic": "^1.0.5",
     "styletron-react": "^4.2.1",
     "wd": "^1.7.0",
-    "webpack": "^4.8.3"
+    "webpack": "^4.9.1",
+    "xpath": "^0.0.27"
   }
 }
