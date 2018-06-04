@@ -1,21 +1,15 @@
-import { remote } from "wd";
 import XPath from "xpath";
-import request from "request";
+import * as _request from "request";
+export const request = _request.defaults({
+  forever: true,
+  json: true,
+  baseUrl: "http://localhost:4444/wd/hub/session/1/"
+  // headers: {
+  //   "Content-type": "application/json"
+  // }
+});
 
-const driver = remote("promiseChain");
-
-async function main() {
-  request(
-    "http://localhost:4444/wd/hub/session/1/package/",
-    (error, response, body) => {
-      console.log(JSON.parse(JSON.parse(body).value));
-    }
-  );
-  console.log(xmlToJSON(await driver.init().source()));
-}
-main();
-
-function xmlToJSON(source) {
+export const xmlToJSON = source => {
   let xmlDoc;
   let recursive = (xmlNode, parentPath, index) => {
     // Translate attributes array to an object
@@ -43,18 +37,17 @@ function xmlToJSON(source) {
       path
     };
   };
-
   xmlDoc = new DOMParser().parseFromString(source, "text/xml");
   let sourceXML = xmlDoc.children[0];
   return recursive(sourceXML);
-}
+};
 
 /**
  * Get an optimal XPath for a DOMNode
  * @param {*} domNode {DOMNode}
  * @param {string[]} uniqueAttributes Attributes we know are unique (defaults to just 'id')
  */
-export function getOptimalXPath(doc, domNode, uniqueAttributes = ["id"]) {
+function getOptimalXPath(doc, domNode, uniqueAttributes = ["id"]) {
   try {
     // BASE CASE #1: If this isn't an element, we're above the root, return empty string
     if (!domNode.tagName || domNode.nodeType !== 1) {
@@ -107,5 +100,51 @@ export function getOptimalXPath(doc, domNode, uniqueAttributes = ["id"]) {
   } catch (ign) {
     // If there's an unexpected exception, abort and don't get an XPath
     return null;
+  }
+}
+let elVariableCounter = 0;
+export const addRecordedActions = element => {
+  const { attributes, xpath } = element;
+  const STRATEGY_MAPPINGS = [
+    ["name", "accessibility id"],
+    ["content-desc", "accessibility id"],
+    ["id", "id"],
+    ["resource-id", "id"]
+  ];
+  for (let [strategyAlias, strategy] of STRATEGY_MAPPINGS) {
+    if (attributes[strategyAlias])
+      return {
+        variableName: `el${elVariableCounter++}`,
+        // variableType: "string",
+        strategy,
+        selector: attributes[strategyAlias]
+      };
+  }
+  return {
+    variableName: `el${elVariableCounter++}`,
+    // variableType: "string",
+    strategy: "xpath",
+    selector: xpath
+  };
+};
+export function parseCoordinates(element) {
+  let { bounds, x, y, width, height } = element.attributes || {};
+
+  if (bounds) {
+    let boundsArray = bounds.split(/\[|\]|,/).filter(str => str !== "");
+    return {
+      x1: boundsArray[0],
+      y1: boundsArray[1],
+      x2: boundsArray[2],
+      y2: boundsArray[3]
+    };
+  } else if (x) {
+    x = parseInt(x, 10);
+    y = parseInt(y, 10);
+    width = parseInt(width, 10);
+    height = parseInt(height, 10);
+    return { x1: x, y1: y, x2: x + width, y2: y + height };
+  } else {
+    return {};
   }
 }

@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import { ipcRenderer, remote } from "electron";
+import adbkit from "adbkit";
 import "./devices.min.css";
+const client = adbkit.createClient();
 
 class App extends Component {
   constructor() {
@@ -14,12 +16,17 @@ class App extends Component {
   componentWillMount() {
     ipcRenderer.on("devices", (_event, devices) => {
       this.setState({ devices: devices });
+      console.log(devices);
     });
   }
   openDeviceWindow() {
     // 本地端口转发
     // @ts-ignore
-    ipcRenderer.send("forward", this.id);
+    client.forward(this.id, "tcp:1717", "localabstract:minicap");
+    // @ts-ignore
+    client.forward(this.id, "tcp:1718", "localabstract:minitouch");
+    // @ts-ignore
+    client.forward(this.id, "tcp:4444", "tcp:6790");
     // @ts-ignore
     const [width, height] = this.screen.split("x");
     let sessionWin = new remote.BrowserWindow({
@@ -37,15 +44,14 @@ class App extends Component {
         `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}?device=${
           // @ts-ignore
           this.id
-        }`
+          // @ts-ignore
+        }&width=${width}`
       );
       sessionWin.webContents.openDevTools();
     } else {
       sessionWin.loadURL(
-        `file://${__dirname}/index.html?device=${
-          // @ts-ignore
-          this.id
-        }`
+        // @ts-ignore
+        `file://${__dirname}/index.html?device=${this.id}&width=${width}`
       );
     }
     sessionWin.show();

@@ -68,11 +68,6 @@ export default [
           );
         }
       },
-      // {
-      //   label: "检查更新",
-      //   id: "checkForUpdate",
-      //   click: autoUpdater.checkForUpdates
-      // },
       {
         label: "已是最新",
         id: "isLatest",

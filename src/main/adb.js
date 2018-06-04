@@ -1,14 +1,6 @@
-import { ipcMain } from "electron";
 // @ts-ignore
 import { util, createClient } from "adbkit";
 export const client = createClient();
-ipcMain.on("forward", (_event, deviceID) => {
-  client.forward(deviceID, "tcp:1717", "localabstract:minicap");
-  // @ts-ignore
-  client.forward(deviceID, "tcp:1718", "localabstract:minitouch");
-  // @ts-ignore
-  client.forward(deviceID, "tcp:4444", "tcp:6790");
-});
 export default async window => {
   const devices = await client.listDevices();
   const getDeviceProperties = async device => {
