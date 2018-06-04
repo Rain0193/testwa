@@ -14,7 +14,6 @@ class App extends Component {
   componentWillMount() {
     ipcRenderer.on("devices", (_event, devices) => {
       this.setState({ devices: devices });
-      console.log(devices);
     });
   }
   openDeviceWindow() {
@@ -38,14 +37,15 @@ class App extends Component {
         `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}?device=${
           // @ts-ignore
           this.id
-          // @ts-ignore
-        }&width=${width}`
+        }`
       );
       sessionWin.webContents.openDevTools();
     } else {
       sessionWin.loadURL(
-        // @ts-ignore
-        `file://${__dirname}/index.html?device=${this.id}&width=${width}`
+        `file://${__dirname}/index.html?device=${
+          // @ts-ignore
+          this.id
+        }`
       );
     }
     sessionWin.show();

@@ -1,19 +1,21 @@
+import { remote } from "wd";
 import XPath from "xpath";
-import * as _request from "request";
-export const request = _request.defaults({
-  forever: true,
-  json: true,
-  baseUrl: "http://localhost:4444/wd/hub/session/"
-  // headers: {
-  //   "Content-type": "application/json"
-  // }
-});
-export const getSource = cb => {
-  request.get("/1/source", (err, res, body) => {
-    cb(body);
-  });
-};
-export const xmlToJSON = source => {
+import request from "request";
+
+const driver = remote("promiseChain");
+
+async function main() {
+  request(
+    "http://localhost:4444/wd/hub/session/1/package/",
+    (error, response, body) => {
+      console.log(JSON.parse(JSON.parse(body).value));
+    }
+  );
+  console.log(xmlToJSON(await driver.init().source()));
+}
+main();
+
+function xmlToJSON(source) {
   let xmlDoc;
   let recursive = (xmlNode, parentPath, index) => {
     // Translate attributes array to an object
@@ -45,14 +47,14 @@ export const xmlToJSON = source => {
   xmlDoc = new DOMParser().parseFromString(source, "text/xml");
   let sourceXML = xmlDoc.children[0];
   return recursive(sourceXML);
-};
+}
 
 /**
  * Get an optimal XPath for a DOMNode
  * @param {*} domNode {DOMNode}
  * @param {string[]} uniqueAttributes Attributes we know are unique (defaults to just 'id')
  */
-function getOptimalXPath(doc, domNode, uniqueAttributes = ["id"]) {
+export function getOptimalXPath(doc, domNode, uniqueAttributes = ["id"]) {
   try {
     // BASE CASE #1: If this isn't an element, we're above the root, return empty string
     if (!domNode.tagName || domNode.nodeType !== 1) {
@@ -107,62 +109,3 @@ function getOptimalXPath(doc, domNode, uniqueAttributes = ["id"]) {
     return null;
   }
 }
-let elVariableCounter = 0;
-export const addRecordedActions = element => {
-  const { attributes, xpath } = element;
-  const STRATEGY_MAPPINGS = [
-    ["name", "accessibility id"],
-    ["content-desc", "accessibility id"],
-    ["id", "id"],
-    ["resource-id", "id"]
-  ];
-  for (let [strategyAlias, strategy] of STRATEGY_MAPPINGS) {
-    if (attributes[strategyAlias])
-      return {
-        variableName: `el${elVariableCounter++}`,
-        // variableType: "string",
-        strategy,
-        selector: attributes[strategyAlias]
-      };
-  }
-  return {
-    variableName: `el${elVariableCounter++}`,
-    // variableType: "string",
-    strategy: "xpath",
-    selector: xpath
-  };
-};
-export function selectHoveredElement(path, source) {
-  let selectedElement = source;
-  for (let index of path.split(".")) {
-    selectedElement = selectedElement.children[index];
-  }
-  return { ...selectedElement };
-}
-export const selectElement = (path, expandedPaths) => {};
-
-// async function main() {
-//   request(
-//     "http://localhost:4444/wd/hub/session/1/package/all",
-//     (error, response, body) => {
-//       console.log(body);
-//       console.log(JSON.parse(JSON.parse(body).value));
-//     }
-//   );
-//   // request(
-//   //   {
-//   //     url: "http://localhost:4444/wd/hub/session/1/appium/tap",
-//   //     method: "POST",
-//   //     json: {
-//   //       x: evt.nativeEvent.offsetX * 2,
-//   //       y: evt.nativeEvent.offsetY * 2
-//   //     },
-//   //     forever: true,
-//   //     headers: {
-//   //       "Content-type": "application/json"
-//   //     }
-//   //   },
-//   //   console.log
-//   // );
-// }
-// // main();
