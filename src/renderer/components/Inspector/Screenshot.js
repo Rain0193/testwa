@@ -5,17 +5,22 @@ import { BannerParser } from "minicap";
 import Button from "@material-ui/core/Button";
 import HighlighterRect from "./HighlighterRect";
 import { xmlToJSON, request } from "./lib";
+import { emitter } from "./lib";
 
 export default class Screenshot extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { selectedElement: {} };
     this.canvas = null;
     this.minitouch = require("net").connect({ port: 1718 });
     this.minicap = require("net").connect({ port: 1717 });
     request.get("/source", (_err, _res, body) => {
-      this.props.setSourceXML(body.value);
+      emitter.emit("sourceXML", body.value);
     });
+    emitter.on("sourceXML", sourceXML => this.setState({ sourceXML }));
+    emitter.on("selectedElement", selectedElement =>
+      this.setState({ selectedElement })
+    );
   }
   onMouseDown(evt) {
     this.isPressing = true;
@@ -31,7 +36,7 @@ export default class Screenshot extends Component {
     this.minitouch.write("c\n");
     setTimeout(() => {
       request.get("/source", (_err, _res, body) => {
-        this.props.setSourceXML(body.value);
+        emitter.emit("sourceXML", body.value);
       });
     }, 2000);
   }
@@ -79,7 +84,7 @@ export default class Screenshot extends Component {
     let recursive = (element, zIndex = 0) => {
       highlighterRects.push(
         <HighlighterRect
-          {...this.props}
+          selectedElement={this.state.selectedElement}
           element={element}
           zIndex={zIndex}
           key={element.path}
@@ -87,7 +92,7 @@ export default class Screenshot extends Component {
       );
       for (let childEl of element.children) recursive(childEl, zIndex + 1);
     };
-    this.props.sourceXML && recursive(xmlToJSON(this.props.sourceXML));
+    this.state.sourceXML && recursive(xmlToJSON(this.state.sourceXML));
     return highlighterRects;
   }
   render() {

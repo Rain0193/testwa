@@ -1,32 +1,29 @@
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import { ipcRenderer, remote } from "electron";
-import adbkit from "adbkit";
 import "./devices.min.css";
-const client = adbkit.createClient();
-
-class App extends Component {
+console.log("设备列表组件入口模块");
+export default class extends Component {
   constructor() {
     // @ts-ignore
     super();
     this.state = {
       devices: []
     };
-  }
-  componentWillMount() {
+    console.log("设备列表组件实例化");
+    console.log("请求获取设备列表信息");
+    ipcRenderer.send("devices"); // dev
     ipcRenderer.on("devices", (_event, devices) => {
-      this.setState({ devices: devices });
-      console.log(devices);
+      console.log("得到设备信息");
+      this.setState({ devices });
     });
   }
   openDeviceWindow() {
-    // 本地端口转发
     // @ts-ignore
-    client.forward(this.id, "tcp:1717", "localabstract:minicap");
+    console.log("请求本地端口转发到", this.id);
+    console.log("创建录制窗口进程");
     // @ts-ignore
-    client.forward(this.id, "tcp:1718", "localabstract:minitouch");
-    // @ts-ignore
-    client.forward(this.id, "tcp:4444", "tcp:6790");
+    ipcRenderer.send("forward", this.id);
     // @ts-ignore
     const [width, height] = this.screen.split("x");
     let sessionWin = new remote.BrowserWindow({
@@ -57,6 +54,8 @@ class App extends Component {
     sessionWin.show();
   }
   render() {
+    console.log("设备列表组件渲染");
+
     return this.state.devices.map(device => (
       <div key={device.id} className="marvel-device note8">
         <div className="inner" />
@@ -70,18 +69,23 @@ class App extends Component {
         <div className="volume" />
         <div className="camera" />
         <div className="screen">
-          {device.brand} {device.type}
-          <br />
-          {device.model}
-          <br />
-          Android {device.release} SDK {device.sdk}
-          <br />
-          {device.screen}
-          <br />
-          <Button onClick={this.openDeviceWindow.bind(device)}>开始</Button>
+          {device.brand || device.id} {device.type}
+          {device.type !== "offline" ? (
+            <div>
+              {device.model}
+              <br />
+              Android {device.release} SDK {device.sdk}
+              <br />
+              {device.screen}
+              <br />
+              <Button onClick={this.openDeviceWindow.bind(device)}>开始</Button>
+            </div>
+          ) : (
+            <div>设备已离线，请重新打开USB调试</div>
+          )}
+          {console.log(device.id, "渲染")}
         </div>
       </div>
     ));
   }
 }
-export default App;

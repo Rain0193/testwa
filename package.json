@@ -66,11 +66,9 @@
       ]
     },
     "win": {
-      "target": ["nsis"]
-    },
-    "linux": {
-      "target": ["deb", "AppImage"],
-      "category": "Development"
+      "target": [
+        "nsis"
+      ]
     },
     "directories": {
       "output": "release"

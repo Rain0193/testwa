@@ -1,7 +1,7 @@
+console.log("自动更新模块");
 import { autoUpdater } from "electron-updater";
 import { Menu } from "electron";
 export default () => {
-  if (process.mas) return;
   const upgradeItems = [
     Menu.getApplicationMenu().getMenuItemById("isLatest"),
     Menu.getApplicationMenu().getMenuItemById("downloadingUpdate"),
@@ -10,7 +10,7 @@ export default () => {
   const updateMenu = id => {
     for (const upgradeItem of upgradeItems) {
       // @ts-ignore
-      upgradeItem.visible = upgradeItem.id === id ? true : false;
+      upgradeItem.visible = upgradeItem.id === id;
     }
   };
   updateMenu("isLatest");
@@ -29,6 +29,6 @@ export default () => {
   autoUpdater.on("error", () => {
     updateMenu("isLatest");
   });
-
+  console.log("准备检查更新");
   autoUpdater.checkForUpdatesAndNotify();
 };

@@ -4,15 +4,20 @@ import { Card, Select, Icon } from "antd";
 import InspectorStyles from "./Inspector.css";
 import frameworks from "./client-frameworks";
 import { highlight } from "highlight.js";
-
+import { emitter } from "./lib";
 const Option = Select.Option;
 export default class RecordedActions extends Component {
   constructor(props) {
     super(props);
-    this.state = { actionFramework: "json" };
+    this.state = { actionFramework: "json", recordedActions: [] };
+    emitter.on("recordedActions", recordedActions =>
+      this.setState({
+        recordedActions: [...this.state.recordedActions, ...recordedActions]
+      })
+    );
   }
   code(raw = true) {
-    let { recordedActions } = this.props;
+    let { recordedActions } = this.state;
     if (this.state.actionFramework === "json")
       return JSON.stringify(recordedActions);
     let framework = new frameworks[this.state.actionFramework]();

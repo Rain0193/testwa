@@ -1,19 +1,20 @@
-import Framework from './framework';
+import Framework from "./framework";
 
 class JsWdIoFramework extends Framework {
+  get language() {
+    console.log("wdio 脚本");
 
-  get language () {
     return "js";
   }
 
-  chainifyCode (code) {
+  chainifyCode(code) {
     return code
-      .replace(/let .+ = /g, '')
-      .replace(/(\n|^)(driver|el.+)\./g, '\n.')
-      .replace(/;\n/g, '\n');
+      .replace(/let .+ = /g, "")
+      .replace(/(\n|^)(driver|el.+)\./g, "\n.")
+      .replace(/;\n/g, "\n");
   }
 
-  wrapWithBoilerplate (code) {
+  wrapWithBoilerplate(code) {
     let host = JSON.stringify(this.host);
     let caps = JSON.stringify(this.caps);
     let proto = JSON.stringify(this.scheme);
@@ -39,18 +40,34 @@ ${this.indent(this.chainifyCode(code), 2)}
 `;
   }
 
-  codeFor_findAndAssign (strategy, locator, localVar, isArray) {
+  codeFor_findAndAssign(strategy, locator, localVar, isArray) {
     // wdio has its own way of indicating the strategy in the locator string
     switch (strategy) {
-      case "xpath": break; // xpath does not need to be updated
-      case "accessibility id": locator = `~${locator}`; break;
-      case "id": locator = `${locator}`; break;
-      case "name": locator = `name=${locator}`; break;
-      case "class name": locator = `${locator}`; break;
-      case "-android uiautomator": locator = `android=${locator}`; break;
-      case "-ios predicate string": locator = `ios=${locator}`; break;
-      case "-ios class chain": locator = `ios=${locator}`; break; // TODO: Handle IOS class chain properly. Not all libs support it. Or take it out
-      default: throw new Error(`Can't handle strategy ${strategy}`);
+      case "xpath":
+        break; // xpath does not need to be updated
+      case "accessibility id":
+        locator = `~${locator}`;
+        break;
+      case "id":
+        locator = `${locator}`;
+        break;
+      case "name":
+        locator = `name=${locator}`;
+        break;
+      case "class name":
+        locator = `${locator}`;
+        break;
+      case "-android uiautomator":
+        locator = `android=${locator}`;
+        break;
+      case "-ios predicate string":
+        locator = `ios=${locator}`;
+        break;
+      case "-ios class chain":
+        locator = `ios=${locator}`;
+        break; // TODO: Handle IOS class chain properly. Not all libs support it. Or take it out
+      default:
+        throw new Error(`Can't handle strategy ${strategy}`);
     }
     if (isArray) {
       return `let ${localVar} = driver.elements(${JSON.stringify(locator)});`;
@@ -59,27 +76,29 @@ ${this.indent(this.chainifyCode(code), 2)}
     }
   }
 
-  codeFor_click (varName, varIndex) {
+  codeFor_click(varName, varIndex) {
     return `${this.getVarName(varName, varIndex)}.click();`;
   }
 
-  codeFor_clear (varName, varIndex) {
+  codeFor_clear(varName, varIndex) {
     return `${this.getVarName(varName, varIndex)}.clearElement();`;
   }
 
-  codeFor_sendKeys (varName, varIndex, text) {
-    return `${this.getVarName(varName, varIndex)}.setValue(${JSON.stringify(text)});`;
+  codeFor_sendKeys(varName, varIndex, text) {
+    return `${this.getVarName(varName, varIndex)}.setValue(${JSON.stringify(
+      text
+    )});`;
   }
 
-  codeFor_back () {
+  codeFor_back() {
     return `driver.back();`;
   }
 
-  codeFor_tap (varNameIgnore, varIndexIgnore, x, y) {
+  codeFor_tap(varNameIgnore, varIndexIgnore, x, y) {
     return `driver.touchAction({actions: 'tap', x: ${x}, y: ${y}})`;
   }
 
-  codeFor_swipe (varNameIgnore, varIndexIgnore, x1, y1, x2, y2) {
+  codeFor_swipe(varNameIgnore, varIndexIgnore, x1, y1, x2, y2) {
     return `driver.touchAction([
   {action: 'press', x: ${x1}, y: ${y1}},
   {action: 'moveTo', x: ${x2}, y: ${y2}},

@@ -1,5 +1,7 @@
 import XPath from "xpath";
 import * as _request from "request";
+console.log("录制辅助方法模块");
+export const emitter = new (require("events")).EventEmitter();
 export const request = _request.defaults({
   forever: true,
   json: true,
@@ -10,6 +12,8 @@ export const request = _request.defaults({
 });
 
 export const xmlToJSON = source => {
+  console.log("xml 转 json");
+
   let xmlDoc;
   let recursive = (xmlNode, parentPath, index) => {
     // Translate attributes array to an object
@@ -103,7 +107,8 @@ function getOptimalXPath(doc, domNode, uniqueAttributes = ["id"]) {
   }
 }
 let elVariableCounter = 0;
-export const addRecordedActions = element => {
+export const getRecordedActions = element => {
+  console.log("获取操作行为");
   const { attributes, xpath } = element;
   const STRATEGY_MAPPINGS = [
     ["name", "accessibility id"],

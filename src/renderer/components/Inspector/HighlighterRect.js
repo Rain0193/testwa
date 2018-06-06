@@ -1,15 +1,14 @@
 import React, { Component } from "react";
 // @ts-ignore
 import InspectorCSS from "./Inspector.css";
-import { parseCoordinates } from "./lib";
-import { addRecordedActions } from "./lib";
+import { getRecordedActions, parseCoordinates, emitter } from "./lib";
 export default class HighlighterRect extends Component {
   constructor(props) {
     super(props);
     this.timer = null;
   }
   render() {
-    let { selectedElement = {}, element, zIndex } = this.props;
+    let { selectedElement, element, zIndex } = this.props;
     const { x1, y1, x2, y2 } = parseCoordinates(element);
     let left = x1 / 2;
     let top = y1 / 2;
@@ -23,10 +22,10 @@ export default class HighlighterRect extends Component {
             : "highlighter-box"
         }
         onClick={() => {
-          const { variableName, strategy, selector } = addRecordedActions(
+          const { variableName, strategy, selector } = getRecordedActions(
             element
           );
-          this.props.addRecordedActions([
+          emitter.emit("recordedActions", [
             {
               action: "findAndAssign",
               params: [strategy, selector, variableName]
@@ -39,7 +38,7 @@ export default class HighlighterRect extends Component {
         }}
         onMouseOver={() => {
           this.timer = setTimeout(() => {
-            this.props.setSelectedElement(element);
+            emitter.emit("selectedElement", element);
             const expandedPaths = [];
             const pathArr = element.path
               .split(".")
@@ -49,7 +48,7 @@ export default class HighlighterRect extends Component {
               let path = pathArr.join(".");
               expandedPaths.push(path);
             }
-            this.props.setExpandedPaths(expandedPaths);
+            emitter.emit("expandedPaths", expandedPaths);
           }, 600);
         }}
         onMouseOut={() => {

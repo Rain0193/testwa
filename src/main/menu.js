@@ -1,3 +1,4 @@
+console.log("菜单栏模块");
 import { app, shell, dialog } from "electron";
 import { autoUpdater } from "electron-updater";
 export default [
@@ -51,21 +52,14 @@ export default [
       {
         label: "关于",
         click: () => {
-          dialog.showMessageBox(
-            {
-              type: "info",
-              title: "关于",
-              buttons: ["OK"],
-              message: `
-                  Testwa ${app.getVersion()}
-                  ♥感谢以下开源项目♥
-                  Electron ${process.versions.electron}
-                  Chromium ${process.versions.chrome}
-                  Node.js ${process.versions.node}
-                `
-            },
-            () => {}
-          );
+          dialog.showMessageBox({
+            title: "关于",
+            message: `Testwa 版本 ${app.getVersion()}
+♥Testwa 的诞生离不开以下开源项目♥
+            Electron ${process.versions.electron}
+            Chromium ${process.versions.chrome}
+            Node.js ${process.versions.node}`
+          });
         }
       },
       {
