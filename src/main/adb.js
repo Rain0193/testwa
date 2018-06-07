@@ -92,14 +92,17 @@ export default async window => {
     Promises.push(getDeviceProperties(device));
   }
   await Promise.all(Promises);
-  console.log("发送设备信息列表");
-  window.webContents.send("devices", devices);
+  if (devices.length) {
+    console.log("发送设备信息列表");
+    window.webContents.send("devices", devices);
+  }
   for (const device of devices) {
     if (device.type === "offline") continue;
     push2Device(device);
   }
   console.log("监听设备变化");
   (await client.trackDevices()).on("changeSet", async changes => {
+    if (!changes.removed.length && !changes.changed.length) return;
     for (const device of changes.removed) {
       console.log(device.id, "离开");
       let idx = devices.findIndex(e => e.id === device.id);
@@ -117,13 +120,16 @@ export default async window => {
         push2Device(device);
       }
     }
-    console.log("发送设备信息列表");
+    console.log("发送新设备信息列表");
     window.webContents.send("devices", devices);
   });
   // dev
   console.log("监听获取设备信息的请求");
   ipcMain.on("devices", () => {
-    console.log("响应获取设备信息的请求，发送设备信息列表");
-    window.webContents.send("devices", devices);
+    console.log("响应获取设备信息的请求");
+    if (devices.length) {
+      console.log("发送设备信息列表");
+      window.webContents.send("devices", devices);
+    }
   });
 };
