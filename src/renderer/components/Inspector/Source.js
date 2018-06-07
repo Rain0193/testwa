@@ -25,7 +25,6 @@ export default class extends Component {
     });
   }
   getFormattedTag(el) {
-    console.log("获取ui树节点标题");
     const { tagName, attributes } = el;
     let attrs = [];
     for (let attr of [

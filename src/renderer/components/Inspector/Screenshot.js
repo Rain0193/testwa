@@ -18,12 +18,10 @@ export default class extends Component {
     console.log("请求获取XML");
     request.get("/source", (_err, _res, body) => {
       console.log("已获取XML，请求更新 state");
+      this.setState({ sourceXML: body.value });
       emitter.emit("sourceXML", body.value);
     });
-    emitter.on("sourceXML", sourceXML => {
-      console.log("得到XML，更新state");
-      this.setState({ sourceXML });
-    });
+
     emitter.on("selectedElement", selectedElement => {
       console.log("得到选中元素，更新state");
       this.setState({ selectedElement });
@@ -45,6 +43,7 @@ export default class extends Component {
       console.log("请求获取XML");
       request.get("/source", (_err, _res, body) => {
         console.log("已获取XML，请求更新 state");
+        this.setState({ sourceXML: body.value });
         emitter.emit("sourceXML", body.value);
       });
     }, 2000);
@@ -90,7 +89,7 @@ export default class extends Component {
   }
 
   highlighterRects() {
-    console.log("加载ui高亮");
+    console.log("更新屏幕ui高亮布局");
     const highlighterRects = [];
     let recursive = (element, zIndex = 0) => {
       highlighterRects.push(
@@ -116,8 +115,8 @@ export default class extends Component {
           onMouseMove={this.onMouseMove.bind(this)}
           onMouseOut={() => (this.isPressing = false)}
         >
+          {console.log("屏幕画面")}
           <canvas ref={canvas => (this.canvas = canvas)} />
-          {console.log("屏幕内容")}
           {this.highlighterRects()}
         </div>
         <Button>菜单</Button>

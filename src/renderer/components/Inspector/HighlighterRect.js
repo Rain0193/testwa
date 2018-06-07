@@ -4,7 +4,6 @@ import { getRecordedActions, parseCoordinates, emitter } from "./lib";
 // @ts-ignore
 import InspectorCSS from "./Inspector.css";
 export default ({ selectedElement, element, zIndex }) => {
-  console.log("UI布局高亮方法调用");
   const { x1, y1, x2, y2 } = parseCoordinates(element);
   let left = x1 / 2;
   let top = y1 / 2;
@@ -65,7 +64,6 @@ export default ({ selectedElement, element, zIndex }) => {
       }}
     >
       <div />
-      {console.log("UI布局内容")}
     </div>
   );
 };
