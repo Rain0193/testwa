@@ -1,23 +1,22 @@
-console.log("操作行为组件模块");
 import React, { Component } from "react";
 import { Card, Select, Icon } from "antd";
-import { highlight } from "highlight.js";
-import frameworks from "./client-frameworks";
-import { emitter } from "./lib";
 // @ts-ignore
 import InspectorStyles from "./Inspector.css";
+import frameworks from "./client-frameworks";
+import { highlight } from "highlight.js";
+import { emitter } from "./lib";
+console.log("操作行为组件模块");
 const Option = Select.Option;
 export default class extends Component {
   constructor(props) {
     console.log("操作行为组件实例化");
     super(props);
     this.state = { actionFramework: "json", recordedActions: [] };
-    emitter.on("recordedActions", recordedActions => {
-      console.log("得到操作行为，更新state");
+    emitter.on("recordedActions", recordedActions =>
       this.setState({
         recordedActions: [...this.state.recordedActions, ...recordedActions]
-      });
-    });
+      })
+    );
   }
   code() {
     console.log("脚本代码生成");
@@ -30,11 +29,10 @@ export default class extends Component {
     return highlight(framework.language, rawCode, true).value;
   }
   actionBar() {
-    console.log("生成语言菜单项");
     return (
       <div>
         <Select
-          defaultValue="json"
+          defaultValue={this.state.actionFramework}
           // @ts-ignore
           onChange={actionFramework => this.setState({ actionFramework })}
           className={InspectorStyles["framework-dropdown"]}

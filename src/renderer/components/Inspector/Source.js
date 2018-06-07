@@ -1,28 +1,24 @@
-console.log("ui树组件模块");
 import React, { Component } from "react";
-import { Card, Icon, Tree } from "antd";
-import { emitter, xmlToJSON } from "./lib";
+import { Tree } from "antd";
 // @ts-ignore
 import InspectorStyles from "./Inspector.css";
+import { Card, Icon } from "antd";
+import { emitter, xmlToJSON } from "./lib";
+console.log("ui树方法模块");
 const { TreeNode } = Tree;
 
 export default class extends Component {
   constructor(props) {
-    console.log("ui树组件实例化");
+    console.log("ui树方法调用");
     super(props);
     this.state = { selectedElement: {} };
-    emitter.on("selectedElement", selectedElement => {
-      console.log("得到当前选中元素，更新state");
-      this.setState({ selectedElement });
-    });
-    emitter.on("sourceXML", sourceXML => {
-      console.log("得到XML，更新state");
-      this.setState({ sourceXML });
-    });
-    emitter.on("expandedPaths", expandedPaths => {
-      console.log("得到展开元素，更新state");
-      this.setState({ expandedPaths });
-    });
+    emitter.on("selectedElement", selectedElement =>
+      this.setState({ selectedElement })
+    );
+    emitter.on("sourceXML", sourceXML => this.setState({ sourceXML }));
+    emitter.on("expandedPaths", expandedPaths =>
+      this.setState({ expandedPaths })
+    );
   }
   getFormattedTag(el) {
     console.log("获取ui树节点标题");
@@ -34,8 +30,8 @@ export default class extends Component {
       "resource-id",
       "AXDescription",
       "AXIdentifier"
-    ])
-      if (attributes[attr])
+    ]) {
+      if (attributes[attr]) {
         attrs.push(
           <span key={attr}>
             &nbsp;
@@ -46,6 +42,8 @@ export default class extends Component {
             </span>
           </span>
         );
+      }
+    }
     return (
       <span>
         &lt;<b className={InspectorStyles.sourceTag}>{tagName}</b>
@@ -54,7 +52,6 @@ export default class extends Component {
     );
   }
   render() {
-    console.log("ui树组件渲染");
     let recursive = elemObj =>
       elemObj.children.map(el => (
         <TreeNode title={this.getFormattedTag(el)} key={el.path}>
@@ -74,15 +71,15 @@ export default class extends Component {
           {this.state.sourceXML &&
             this.state.selectedElement && (
               <Tree
-                autoExpandParent={false}
-                expandedKeys={this.state.expandedPaths}
-                selectedKeys={[this.state.selectedElement.path]}
                 onExpand={expandedPaths => {
                   emitter.emit("expandedPaths", expandedPaths);
                 }}
+                autoExpandParent={false}
+                expandedKeys={this.state.expandedPaths}
                 onSelect={selectedPaths =>
                   console.log("选中元素", selectedPaths)
                 }
+                selectedKeys={[this.state.selectedElement.path]}
               >
                 {recursive(xmlToJSON(this.state.sourceXML))}
                 {console.log("ui树内容")}

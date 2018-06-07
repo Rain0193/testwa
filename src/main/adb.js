@@ -3,16 +3,17 @@ import { ipcMain } from "electron";
 import adbkit from "adbkit";
 export const client = adbkit.createClient();
 ipcMain.on("forward", (_, deviceID) => {
-  console.log("端口映射到", deviceID);
+  console.log("端口映射");
   client.forward(deviceID, "tcp:1717", "localabstract:minicap");
   client.forward(deviceID, "tcp:1718", "localabstract:minitouch");
   client.forward(deviceID, "tcp:4444", "tcp:6790");
 });
 export default async window => {
   console.log("获取设备列表");
+
   const devices = await client.listDevices();
   const getDeviceProperties = async device => {
-    console.log("获取设备详细信息", device.id);
+    console.log("获取设备信息");
     const [properties, screen] = await Promise.all([
       client.getProperties(device.id),
       adbkit.util.readAll(await client.shell(device.id, "wm size"))
@@ -27,7 +28,7 @@ export default async window => {
       .trim();
   };
   const push2Device = async device => {
-    console.log("推送服务文件到", device.id);
+    console.log("推送服务到安卓");
     await Promise.all([
       client.push(
         device.id,
@@ -70,7 +71,7 @@ export default async window => {
             __static + "/apks/appium-uiautomator2-server-debug-androidTest.apk"
           )
     ]);
-    console.log("启动安卓端服务", device.id);
+    console.log("启动安卓端服务");
     client.shell(
       device.id,
       `LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/minicap -P ${
@@ -99,6 +100,7 @@ export default async window => {
     push2Device(device);
   }
   console.log("监听设备变化");
+
   (await client.trackDevices()).on("changeSet", async changes => {
     for (const device of changes.removed) {
       console.log(device.id, "离开");
@@ -117,13 +119,12 @@ export default async window => {
         push2Device(device);
       }
     }
-    console.log("发送设备信息列表");
     window.webContents.send("devices", devices);
   });
   // dev
-  console.log("监听获取设备信息的请求");
+  console.log("监听设备信息获取请求");
   ipcMain.on("devices", () => {
-    console.log("响应获取设备信息的请求，发送设备信息列表");
+    console.log("响应设备信息获取请求，发送设备信息列表");
     window.webContents.send("devices", devices);
   });
 };

@@ -1,7 +1,8 @@
-console.log("录制辅助方法模块");
 import XPath from "xpath";
+import * as _request from "request";
+console.log("录制辅助方法模块");
 export const emitter = new (require("events")).EventEmitter();
-export const request = require("request").defaults({
+export const request = _request.defaults({
   forever: true,
   json: true,
   baseUrl: "http://localhost:4444/wd/hub/session/1/"
@@ -9,8 +10,10 @@ export const request = require("request").defaults({
   //   "Content-type": "application/json"
   // }
 });
+
 export const xmlToJSON = source => {
   console.log("xml 转 json");
+
   let xmlDoc;
   let recursive = (xmlNode, parentPath, index) => {
     // Translate attributes array to an object
@@ -42,6 +45,7 @@ export const xmlToJSON = source => {
   let sourceXML = xmlDoc.children[0];
   return recursive(sourceXML);
 };
+
 /**
  * Get an optimal XPath for a DOMNode
  * @param {*} domNode {DOMNode}
@@ -129,7 +133,6 @@ export const getRecordedActions = element => {
   };
 };
 export function parseCoordinates(element) {
-  // @ts-ignore
   let { bounds, x, y, width, height } = element.attributes || {};
 
   if (bounds) {

@@ -1,34 +1,35 @@
-console.log("设备列表组件入口模块");
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import { ipcRenderer, remote } from "electron";
 import "./devices.min.css";
+console.log("设备列表组件入口模块");
 export default class extends Component {
-  constructor(props) {
-    console.log("设备列表组件实例化");
-    super(props);
+  constructor() {
+    // @ts-ignore
+    super();
     this.state = {
       devices: []
     };
+    console.log("设备列表组件实例化");
     console.log("请求获取设备列表信息");
     ipcRenderer.send("devices"); // dev
     ipcRenderer.on("devices", (_event, devices) => {
-      console.log("得到设备信息，修改state");
+      console.log("得到设备信息");
       this.setState({ devices });
     });
   }
   openDeviceWindow() {
     // @ts-ignore
     console.log("请求本地端口转发到", this.id);
+    console.log("创建录制窗口进程");
     // @ts-ignore
     ipcRenderer.send("forward", this.id);
     // @ts-ignore
     const [width, height] = this.screen.split("x");
-    console.log("创建录制窗口进程");
     let sessionWin = new remote.BrowserWindow({
       // frame: false,
       // center: true,
-      // height: height * 2,
+      height: height * 2,
       // width: width,
       // resizable: false,
       // transparent: true,
@@ -36,7 +37,6 @@ export default class extends Component {
       // titleBarStyle: "hiddenInset"
     });
     if (remote.process.defaultApp) {
-      console.log("开发环境");
       sessionWin.loadURL(
         `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}?device=${
           // @ts-ignore
@@ -46,17 +46,16 @@ export default class extends Component {
       );
       sessionWin.webContents.openDevTools();
     } else {
-      console.log("生产环境");
       sessionWin.loadURL(
         // @ts-ignore
         `file://${__dirname}/index.html?device=${this.id}&width=${width}`
       );
     }
-    sessionWin.maximize();
     sessionWin.show();
   }
   render() {
     console.log("设备列表组件渲染");
+
     return this.state.devices.map(device => (
       <div key={device.id} className="marvel-device note8">
         <div className="inner" />
