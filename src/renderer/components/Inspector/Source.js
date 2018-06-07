@@ -3,13 +3,13 @@ import { Tree } from "antd";
 // @ts-ignore
 import InspectorStyles from "./Inspector.css";
 import { Card, Icon } from "antd";
-import { request, xmlToJSON } from "./lib";
-import { emitter } from "./lib";
-
+import { emitter, xmlToJSON } from "./lib";
+console.log("ui树方法模块");
 const { TreeNode } = Tree;
 
-export default class Source extends Component {
+export default class extends Component {
   constructor(props) {
+    console.log("ui树方法调用");
     super(props);
     this.state = { selectedElement: {} };
     emitter.on("selectedElement", selectedElement =>
@@ -19,11 +19,9 @@ export default class Source extends Component {
     emitter.on("expandedPaths", expandedPaths =>
       this.setState({ expandedPaths })
     );
-    // request.get("/source", (_err, _res, body) => {
-    //   this.setState({ sourceXML: body.value });
-    // });
   }
   getFormattedTag(el) {
+    console.log("获取ui树节点标题");
     const { tagName, attributes } = el;
     let attrs = [];
     for (let attr of [
@@ -78,10 +76,13 @@ export default class Source extends Component {
                 }}
                 autoExpandParent={false}
                 expandedKeys={this.state.expandedPaths}
-                onSelect={selectedPaths => {}}
+                onSelect={selectedPaths =>
+                  console.log("选中元素", selectedPaths)
+                }
                 selectedKeys={[this.state.selectedElement.path]}
               >
                 {recursive(xmlToJSON(this.state.sourceXML))}
+                {console.log("ui树内容")}
               </Tree>
             )}
         </div>
