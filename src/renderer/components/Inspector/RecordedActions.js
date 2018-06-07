@@ -1,58 +1,56 @@
+console.log("操作行为组件模块");
 import React, { Component } from "react";
 import { Card, Select, Icon } from "antd";
+import { highlight } from "highlight.js";
+import frameworks from "./client-frameworks";
+import { emitter } from "./lib";
 // @ts-ignore
 import InspectorStyles from "./Inspector.css";
-import frameworks from "./client-frameworks";
-import { highlight } from "highlight.js";
-import { emitter } from "./lib";
 const Option = Select.Option;
-export default class RecordedActions extends Component {
+export default class extends Component {
   constructor(props) {
+    console.log("操作行为组件实例化");
     super(props);
     this.state = { actionFramework: "json", recordedActions: [] };
-    emitter.on("recordedActions", recordedActions =>
+    emitter.on("recordedActions", recordedActions => {
+      console.log("得到操作行为，更新state");
       this.setState({
         recordedActions: [...this.state.recordedActions, ...recordedActions]
-      })
-    );
+      });
+    });
   }
-  code(raw = true) {
+  code() {
+    console.log("脚本代码生成");
     let { recordedActions } = this.state;
     if (this.state.actionFramework === "json")
       return JSON.stringify(recordedActions);
     let framework = new frameworks[this.state.actionFramework]();
     framework.actions = recordedActions;
     let rawCode = framework.getCodeString();
-    if (raw) {
-      return rawCode;
-    }
     return highlight(framework.language, rawCode, true).value;
   }
-
   actionBar() {
-    let frameworkOpts = Object.keys(frameworks).map(f => (
-      <Option key={f} value={f}>
-        {frameworks[f].readableName || "JSON"}
-      </Option>
-    ));
-
+    console.log("生成语言菜单项");
     return (
       <div>
         <Select
-          defaultValue={this.state.actionFramework}
+          defaultValue="json"
           // @ts-ignore
           onChange={actionFramework => this.setState({ actionFramework })}
           className={InspectorStyles["framework-dropdown"]}
         >
-          {frameworkOpts}
+          {Object.keys(frameworks).map(f => (
+            <Option key={f} value={f}>
+              {frameworks[f].readableName || "JSON"}
+              {console.log("语言菜单项", frameworks[f].readableName || "JSON")}
+            </Option>
+          ))}
         </Select>
       </div>
     );
   }
-
   render() {
-    const highlightedCode = this.code(false);
-
+    console.log("操作行为组件渲染");
     return (
       <Card
         title={
@@ -65,8 +63,9 @@ export default class RecordedActions extends Component {
       >
         <div
           className={InspectorStyles["recorded-code"]}
-          dangerouslySetInnerHTML={{ __html: highlightedCode }}
+          dangerouslySetInnerHTML={{ __html: this.code() }}
         />
+        {console.log("操作行为组件内容")}
       </Card>
     );
   }

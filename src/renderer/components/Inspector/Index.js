@@ -1,3 +1,4 @@
+console.log("录制组件人口模块");
 import React from "react";
 import Screenshot from "./Screenshot";
 import Source from "./Source";
@@ -23,6 +24,7 @@ export default () => (
         <RecordedActions />
         <Source />
       </div>
+      {console.log("录制组件内容")}
     </div>
   </div>
 );

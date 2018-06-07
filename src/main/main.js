@@ -6,16 +6,18 @@ import menu from "./menu";
 import upgrade from "./upgrade";
 import trackDevices from "./adb";
 async function createMainWindow() {
-  console.log("创建主窗口进程");
-  console.log("请求监听设备状态");
+  console.log("请求创建主窗口进程");
   const mainWindow = new BrowserWindow();
+  console.log("请求监听设备状态");
   trackDevices(mainWindow);
   if (process.defaultApp) {
+    console.log("开发环境");
     mainWindow.webContents.openDevTools();
     mainWindow.loadURL(
       `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`
     );
   } else {
+    console.log("生产环境");
     mainWindow.loadURL(`file://${__dirname}/index.html`);
   }
   mainWindow.maximize();
