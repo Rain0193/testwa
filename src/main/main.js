@@ -29,5 +29,5 @@ app.commandLine.appendSwitch("enable-experimental-web-platform-features");
 app.once("ready", createMainWindow);
 app.once("before-quit", () => {
   console.log("准备退出");
-  // client.kill();
 });
+app.once("window-all-closed", app.quit);
