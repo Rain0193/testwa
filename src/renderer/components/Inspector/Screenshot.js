@@ -6,18 +6,15 @@ import Button from "@material-ui/core/Button";
 import HighlighterRect from "./HighlighterRect";
 import { xmlToJSON, request } from "./lib";
 import { emitter } from "./lib";
-console.log("屏幕同步方法模块");
 
-export default class extends Component {
+export default class Screenshot extends Component {
   constructor(props) {
-    console.log("屏幕同步方法调用");
     super(props);
     this.state = { selectedElement: {} };
     this.canvas = null;
     this.minitouch = require("net").connect({ port: 1718 });
     this.minicap = require("net").connect({ port: 1717 });
     request.get("/source", (_err, _res, body) => {
-      console.log("已获取XML，请求设置UI XML");
       emitter.emit("sourceXML", body.value);
     });
     emitter.on("sourceXML", sourceXML => this.setState({ sourceXML }));
@@ -38,9 +35,7 @@ export default class extends Component {
     this.minitouch.write("u 0\n");
     this.minitouch.write("c\n");
     setTimeout(() => {
-      console.log("请求获取UI XML");
       request.get("/source", (_err, _res, body) => {
-        console.log("已获取XML，请求设置UI XML");
         emitter.emit("sourceXML", body.value);
       });
     }, 2000);
@@ -54,7 +49,6 @@ export default class extends Component {
     this.minitouch.write("c\n");
   }
   componentDidMount() {
-    console.log("同步屏幕");
     let banner = null;
     let data = [];
     const g = this.canvas.getContext("2d");
@@ -86,7 +80,6 @@ export default class extends Component {
   }
 
   highlighterRects() {
-    console.log("生成ui高亮");
     const highlighterRects = [];
     let recursive = (element, zIndex = 0) => {
       highlighterRects.push(
@@ -113,7 +106,6 @@ export default class extends Component {
         >
           <canvas ref={canvas => (this.canvas = canvas)} />
           {this.highlighterRects()}
-          {console.log("屏幕内容")}
         </div>
         <Button>菜单</Button>
         <Button>主屏</Button>

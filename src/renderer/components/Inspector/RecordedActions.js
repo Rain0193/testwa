@@ -5,11 +5,9 @@ import InspectorStyles from "./Inspector.css";
 import frameworks from "./client-frameworks";
 import { highlight } from "highlight.js";
 import { emitter } from "./lib";
-console.log("操作行为组件模块");
 const Option = Select.Option;
-export default class extends Component {
+export default class RecordedActions extends Component {
   constructor(props) {
-    console.log("操作行为组件实例化");
     super(props);
     this.state = { actionFramework: "json", recordedActions: [] };
     emitter.on("recordedActions", recordedActions =>
@@ -18,17 +16,26 @@ export default class extends Component {
       })
     );
   }
-  code() {
-    console.log("脚本代码生成");
+  code(raw = true) {
     let { recordedActions } = this.state;
     if (this.state.actionFramework === "json")
       return JSON.stringify(recordedActions);
     let framework = new frameworks[this.state.actionFramework]();
     framework.actions = recordedActions;
     let rawCode = framework.getCodeString();
+    if (raw) {
+      return rawCode;
+    }
     return highlight(framework.language, rawCode, true).value;
   }
+
   actionBar() {
+    let frameworkOpts = Object.keys(frameworks).map(f => (
+      <Option key={f} value={f}>
+        {frameworks[f].readableName || "JSON"}
+      </Option>
+    ));
+
     return (
       <div>
         <Select
@@ -37,18 +44,15 @@ export default class extends Component {
           onChange={actionFramework => this.setState({ actionFramework })}
           className={InspectorStyles["framework-dropdown"]}
         >
-          {Object.keys(frameworks).map(f => (
-            <Option key={f} value={f}>
-              {frameworks[f].readableName || "JSON"}
-              {console.log("语言菜单项", frameworks[f].readableName || "JSON")}
-            </Option>
-          ))}
+          {frameworkOpts}
         </Select>
       </div>
     );
   }
+
   render() {
-    console.log("操作行为组件渲染");
+    const highlightedCode = this.code(false);
+
     return (
       <Card
         title={
@@ -61,9 +65,8 @@ export default class extends Component {
       >
         <div
           className={InspectorStyles["recorded-code"]}
-          dangerouslySetInnerHTML={{ __html: this.code() }}
+          dangerouslySetInnerHTML={{ __html: highlightedCode }}
         />
-        {console.log("操作行为组件内容")}
       </Card>
     );
   }
