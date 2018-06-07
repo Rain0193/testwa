@@ -1,8 +1,8 @@
+console.log("UI布局高亮方法模块");
 import React from "react";
 import { getRecordedActions, parseCoordinates, emitter } from "./lib";
 // @ts-ignore
 import InspectorCSS from "./Inspector.css";
-console.log("UI布局高亮方法模块");
 export default ({ selectedElement, element, zIndex }) => {
   console.log("UI布局高亮方法调用");
   const { x1, y1, x2, y2 } = parseCoordinates(element);
@@ -49,7 +49,7 @@ export default ({ selectedElement, element, zIndex }) => {
           }
           console.log("请求设置展开元素");
           emitter.emit("expandedPaths", expandedPaths);
-        }, 600);
+        }, 300);
       }}
       onMouseOut={() => {
         clearTimeout(timer);

@@ -1,29 +1,33 @@
+console.log("屏幕同步组件模块");
 import React, { Component } from "react";
+import Button from "@material-ui/core/Button";
+import { BannerParser } from "minicap";
+import HighlighterRect from "./HighlighterRect";
+import { xmlToJSON, request, emitter } from "./lib";
 // @ts-ignore
 import styles from "./Inspector.css";
-import { BannerParser } from "minicap";
-import Button from "@material-ui/core/Button";
-import HighlighterRect from "./HighlighterRect";
-import { xmlToJSON, request } from "./lib";
-import { emitter } from "./lib";
-console.log("屏幕同步方法模块");
 
 export default class extends Component {
   constructor(props) {
-    console.log("屏幕同步方法调用");
+    console.log("屏幕同步组件实例化");
     super(props);
     this.state = { selectedElement: {} };
     this.canvas = null;
     this.minitouch = require("net").connect({ port: 1718 });
     this.minicap = require("net").connect({ port: 1717 });
+    console.log("请求获取XML");
     request.get("/source", (_err, _res, body) => {
-      console.log("已获取XML，请求设置UI XML");
+      console.log("已获取XML，请求更新 state");
       emitter.emit("sourceXML", body.value);
     });
-    emitter.on("sourceXML", sourceXML => this.setState({ sourceXML }));
-    emitter.on("selectedElement", selectedElement =>
-      this.setState({ selectedElement })
-    );
+    emitter.on("sourceXML", sourceXML => {
+      console.log("得到XML，更新state");
+      this.setState({ sourceXML });
+    });
+    emitter.on("selectedElement", selectedElement => {
+      console.log("得到选中元素，更新state");
+      this.setState({ selectedElement });
+    });
   }
   onMouseDown(evt) {
     this.isPressing = true;
@@ -38,9 +42,9 @@ export default class extends Component {
     this.minitouch.write("u 0\n");
     this.minitouch.write("c\n");
     setTimeout(() => {
-      console.log("请求获取UI XML");
+      console.log("请求获取XML");
       request.get("/source", (_err, _res, body) => {
-        console.log("已获取XML，请求设置UI XML");
+        console.log("已获取XML，请求更新 state");
         emitter.emit("sourceXML", body.value);
       });
     }, 2000);
@@ -86,7 +90,7 @@ export default class extends Component {
   }
 
   highlighterRects() {
-    console.log("生成ui高亮");
+    console.log("加载ui高亮");
     const highlighterRects = [];
     let recursive = (element, zIndex = 0) => {
       highlighterRects.push(
@@ -103,6 +107,7 @@ export default class extends Component {
     return highlighterRects;
   }
   render() {
+    console.log("屏幕组件渲染");
     return (
       <div className={styles.innerScreenshotContainer}>
         <div
@@ -112,8 +117,8 @@ export default class extends Component {
           onMouseOut={() => (this.isPressing = false)}
         >
           <canvas ref={canvas => (this.canvas = canvas)} />
-          {this.highlighterRects()}
           {console.log("屏幕内容")}
+          {this.highlighterRects()}
         </div>
         <Button>菜单</Button>
         <Button>主屏</Button>
