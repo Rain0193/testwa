@@ -33,7 +33,7 @@
     "package-linux": "yarn compile && build --linux",
     "package-win": "yarn compile && build --win --x64",
     "compile": "electron-webpack",
-    "preinstall": "conda activate py2",
+    "preinstall": "conda activate py2||echo '请手动执行：conda activate py2'",
     "prepackage": "standard-version&&git push --follow-tags"
   },
   "build": {
@@ -104,7 +104,7 @@
     "styletron-engine-atomic": "^1.0.5",
     "styletron-react": "^4.2.2",
     "wd": "^1.9.0",
-    "webpack": "^4.11.1",
+    "webpack": "^4.12.0",
     "xpath": "^0.0.27"
   }
 }

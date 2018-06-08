@@ -1,5 +1,19 @@
 # testwa-desktop
 
+## 运行
+
+```bash
+git clone --recursive git@github.com:canfeit/testwa.git
+cd testwa
+cd static/minicap/
+ndk-build
+cd ../minitouch/
+ndk-build
+cd ../uiautomator2/
+gradle clean assembleServerDebug assembleServerDebugAndroidTest
+yarn&&yarn start
+```
+
 ## 项目架构
 
 - react+styletron：实现 browser UI。
