@@ -4,13 +4,13 @@
 
 ```bash
 git clone --recursive git@github.com:canfeit/testwa.git
-cd testwa
-cd static/minicap/
+cd testwa/static/minicap/
 ndk-build
 cd ../minitouch/
 ndk-build
 cd ../uiautomator2/
-gradle clean assembleServerDebug assembleServerDebugAndroidTest
+yarn&&yarn run version
+cd ../
 yarn&&yarn start
 ```
 

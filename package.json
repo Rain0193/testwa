@@ -30,10 +30,10 @@
     "start": "electron-webpack dev",
     "package": "yarn compile && build --publish always",
     "package-all": "yarn compile && build -mwl",
-    "package-linux": "yarn compile && build --linux",
+    "package-mac": "yarn compile && build --mac",
     "package-win": "yarn compile && build --win --x64",
     "compile": "electron-webpack",
-    "preinstall": "conda activate py2||echo '请手动执行：conda activate py2'",
+    "preinstall": "conda activate py2||echo '请手动执行：conda activate py2,然后重试'",
     "prepackage": "standard-version&&git push --follow-tags"
   },
   "build": {
@@ -46,7 +46,7 @@
     ],
     "extraResources": [
       "static/js",
-      "static/apks",
+      "static/uiautomator2/apks",
       "static/minicap/libs",
       "static/minicap/jni/minicap-shared/aosp/libs",
       "static/minitouch/libs"
@@ -63,11 +63,6 @@
           "type": "link",
           "path": "/Applications"
         }
-      ]
-    },
-    "win": {
-      "target": [
-        "nsis"
       ]
     },
     "directories": {

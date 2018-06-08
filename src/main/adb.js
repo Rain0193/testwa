@@ -57,7 +57,7 @@ export default async window => {
         : client.install(
             device.id,
             // @ts-ignore
-            __static + "/apks/appium-uiautomator2-server-v1.12.0.apk"
+            `${__static}/uiautomator2/apks/uiautomator2-server.apk`
           ),
       (await client.isInstalled(
         device.id,
@@ -67,7 +67,7 @@ export default async window => {
         : client.install(
             device.id,
             // @ts-ignore
-            __static + "/apks/appium-uiautomator2-server-debug-androidTest.apk"
+            `${__static}/uiautomator2/apks/uiautomator2-test.apk`
           )
     ]);
     console.log("启动安卓端服务", device.id);
