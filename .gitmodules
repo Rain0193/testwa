@@ -1,0 +1,9 @@
+[submodule "static/uiautomator2"]
+	path = static/uiautomator2
+	url = git@github.com:canfeit/appium-uiautomator2-server.git
+[submodule "static/minicap"]
+	path = static/minicap
+	url = git@github.com:canfeit/minicap.git
+[submodule "static/minitouch"]
+	path = static/minitouch
+	url = git@github.com:canfeit/minitouch.git
