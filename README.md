@@ -5,10 +5,13 @@
 ```bash
 git clone --recursive git@github.com:canfeit/testwa.git
 cd testwa/static/minicap/
+git checkout master
 ndk-build
 cd ../minitouch/
+git checkout master
 ndk-build
 cd ../uiautomator2/
+git checkout master
 yarn&&yarn run version
 cd ../
 yarn&&yarn start
