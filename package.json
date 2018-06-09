@@ -33,7 +33,7 @@
     "package-mac": "yarn compile && build --mac",
     "package-win": "yarn compile && build --win --x64",
     "compile": "electron-webpack",
-    "preinstall": "conda activate py2||echo '请手动执行：conda activate py2,然后重试'",
+    "preinstall": "conda activate py2||echo '若安装失败请手动执行：conda activate py2,然后重试'",
     "prepackage": "standard-version&&git push --follow-tags"
   },
   "build": {
