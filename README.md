@@ -14,6 +14,7 @@ cd ../uiautomator2/
 git checkout master
 yarn&&yarn run version
 cd ../
+conda activate py2
 yarn&&yarn start
 ```
 
