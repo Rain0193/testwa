@@ -3,7 +3,7 @@ import React from "react";
 import Screenshot from "./Screenshot";
 import Source from "./Source";
 import RecordedActions from "./RecordedActions";
-import "antd/dist/antd.css";
+import "./antd.min.css";
 // @ts-ignore
 import InspectorStyles from "./Inspector.css";
 
