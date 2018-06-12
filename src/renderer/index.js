@@ -5,7 +5,7 @@ import React from "react";
 import { render } from "react-dom";
 import { Provider } from "styletron-react";
 import { parse } from "querystring";
-import "./antd.min.css";
+import "./app.css";
 (async () => {
   console.log("路由选择");
   const Route = parse(location.search.substr(1)).device

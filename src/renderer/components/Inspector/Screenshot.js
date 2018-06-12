@@ -1,6 +1,6 @@
 console.log("屏幕同步组件模块");
 import React, { Component } from "react";
-import Button from "@material-ui/core/Button";
+import { Layout, Icon, Button, Tabs } from "antd";
 import { BannerParser } from "minicap";
 import HighlighterRect from "./HighlighterRect";
 import { xmlToJSON, request, emitter } from "./lib";
