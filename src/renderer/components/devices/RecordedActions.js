@@ -1,6 +1,6 @@
 console.log("操作行为组件模块");
 import React, { Component } from "react";
-import { Card, Select, Icon, Button } from "antd";
+import { Card, Select, Icon, Button, Table } from "antd";
 import { highlight } from "highlight.js";
 import frameworks from "./client-frameworks";
 import { emitter } from "../Inspector/lib";
@@ -106,10 +106,29 @@ export default class extends Component {
         className={InspectorStyles["recorded-actions"]}
         extra={this.actionBar()}
       >
-        <div
-          className={InspectorStyles["recorded-code"]}
-          dangerouslySetInnerHTML={{ __html: this.code() }}
-        />
+        {console.log(this.state.recordedActions, "table")}
+        {this.state.actionFramework === "json" ? (
+          <Table
+            columns={[
+              {
+                title: "操作",
+                dataIndex: "action",
+                key: "action"
+              },
+              {
+                title: "参数",
+                dataIndex: "params",
+                key: "params"
+              }
+            ]}
+            dataSource={this.state.recordedActions}
+          />
+        ) : (
+          <div
+            className={InspectorStyles["recorded-code"]}
+            dangerouslySetInnerHTML={{ __html: this.code() }}
+          />
+        )}
         {console.log("操作行为组件内容")}
       </Card>
     );
