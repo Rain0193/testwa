@@ -64,12 +64,13 @@
     "url": "https://github.com/canfeit/testwa/issues"
   },
   "dependencies": {
+    "pouchdb-browser": "^6.4.3",
     "adbkit": "^2.11.0",
     "source-map-support": "^0.5.6"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.0.0-beta.49",
-    "antd": "^3.6.1",
+    "@babel/preset-react": "^7.0.0-beta.51",
+    "antd": "^3.6.2",
     "appium": "^1.8.1",
     "axios": "^0.18.0",
     "electron": "^2.0.2",
@@ -84,7 +85,7 @@
     "request": "^2.87.0",
     "standard-version": "^4.4.0",
     "styletron-engine-atomic": "^1.0.5",
-    "styletron-react": "^4.2.2",
+    "styletron-react": "^4.3.0",
     "wd": "^1.9.0",
     "webpack": "^4.12.0",
     "xpath": "^0.0.27"

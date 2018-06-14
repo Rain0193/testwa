@@ -4,8 +4,10 @@ import { Layout, Icon, Button, Tabs } from "antd";
 import { BannerParser } from "minicap";
 import HighlighterRect from "./HighlighterRect";
 import { xmlToJSON, request, emitter } from "./lib";
+import adbkit from "adbkit";
 // @ts-ignore
 import styles from "./Inspector.css";
+export const client = adbkit.createClient();
 
 export default class extends Component {
   constructor(props) {
@@ -16,12 +18,15 @@ export default class extends Component {
     this.minitouch = require("net").connect({ port: 1718 });
     this.minicap = require("net").connect({ port: 1717 });
     console.log("请求获取XML");
-    request.get("/source", (_err, _res, body) => {
-      console.log("已获取XML，请求更新 state");
-      this.setState({ sourceXML: body.value });
-      emitter.emit("sourceXML", body.value);
-    });
-
+    setTimeout(
+      () =>
+        request.get("/source", (_err, _res, body) => {
+          console.log("已获取XML，请求更新 state");
+          this.setState({ sourceXML: body.value });
+          emitter.emit("sourceXML", body.value);
+        }),
+      1000
+    );
     emitter.on("selectedElement", selectedElement => {
       console.log("得到选中元素，更新state");
       this.setState({ selectedElement });
@@ -119,9 +124,27 @@ export default class extends Component {
           <canvas ref={canvas => (this.canvas = canvas)} />
           {this.highlighterRects()}
         </div>
-        <Button>菜单</Button>
-        <Button>主屏</Button>
-        <Button>返回</Button>
+        <Button
+          onClick={() =>
+            client.shell(this.props.device, 'input keyevent "KEYCODE_MENU"')
+          }
+        >
+          菜单
+        </Button>
+        <Button
+          onClick={() =>
+            client.shell(this.props.device, 'input keyevent "KEYCODE_HOME"')
+          }
+        >
+          主屏
+        </Button>
+        <Button
+          onClick={() =>
+            client.shell(this.props.device, 'input keyevent "KEYCODE_BACK"')
+          }
+        >
+          返回
+        </Button>
       </div>
     );
   }

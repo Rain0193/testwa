@@ -9,6 +9,9 @@ ipcMain.on("forward", (_, deviceID) => {
   client.forward(deviceID, "tcp:4444", "tcp:6790");
 });
 export default async window => {
+  ipcMain.on("recordedActions", (_, recordedActions) =>
+    window.webContents.send("recordedActions", recordedActions)
+  );
   console.log("获取设备列表");
   const devices = await client.listDevices();
   const getDeviceProperties = async device => {

@@ -1,22 +1,50 @@
 console.log("设备列表组件入口模块");
 import React, { Component } from "react";
 import { ipcRenderer, remote } from "electron";
-import { Layout, Icon, Button, Tabs } from "antd";
+import { Layout, Icon, Button, Tabs, Card, Tree } from "antd";
 const TabPane = Tabs.TabPane;
 const { Header, Footer, Sider, Content } = Layout;
 import { Subject } from "rxjs";
 import { map, takeUntil, concatAll, withLatestFrom } from "rxjs/operators";
 import "./devices.layout.css";
+import { request, emitter } from "../Inspector/lib";
+import adbkit from "adbkit";
+import Guide from "./guide";
+import RecordedActions from "./RecordedActions";
+const PouchDB = require("pouchdb-browser");
+const db = new PouchDB("code");
+
+export const client = adbkit.createClient();
 export default class extends Component {
   constructor(props) {
     console.log("设备列表组件实例化");
     super(props);
     this.state = {
+      activeKey: "device",
+      packages: [],
       devices: [],
-      terminalDisplay: true,
+      codes: [],
+      terminalDisplay: false,
       sideWidth: 0,
       terminalHeight: 0
     };
+    db.changes({
+      since: "now",
+      live: true,
+      include_docs: true
+    }).on("change", () => {
+      db.allDocs({ include_docs: true, descending: true }).then(({ rows }) => {
+        const codes = rows.map(({ doc }) => doc);
+        this.setState({ codes });
+        console.log(rows, codes, "hhhhhhhhhhhhhhhhhhhhh");
+      });
+    });
+    db.allDocs({ include_docs: true, descending: true }).then(({ rows }) => {
+      const codes = rows.map(({ doc }) => doc);
+      this.setState({ codes });
+      console.log(rows, codes, "hhhhhhhhhhhhhhhhhhhhh");
+    });
+    this.device = null;
     this.terminalSwitch = this.terminalSwitch.bind(this);
     console.log("请求获取设备列表信息");
     ipcRenderer.send("devices"); // dev
@@ -109,16 +137,31 @@ export default class extends Component {
   terminalSwitch() {
     this.setState({ terminalDisplay: !this.state.terminalDisplay });
   }
-
-  openDeviceWindow() {
+  showCode() {
+    console.log(this.state.codes, "shouCode");
+    return (
+      <Tree.TreeNode title="脚本" key="0">
+        {this.state.codes.map(code => (
+          <Tree.TreeNode title={code.name} key={code._id} />
+        ))}
+      </Tree.TreeNode>
+    );
+  }
+  onSelectCode([id]) {
+    if (id)
+      db.get(id).then(code => {
+        console.log(code);
+        this.setState({ code });
+        emitter.emit("code", code);
+        // ipcRenderer.send("recordedActions", [code.value]); // dev
+        this.setState({ activeKey: "Recording" });
+      });
+  }
+  openDeviceWindow(device) {
     // @ts-ignore
-    console.log("请求本地端口转发到", this.id);
-    // @ts-ignore
-    ipcRenderer.send("forward", this.id);
-    // @ts-ignore
-    const [width, height] = this.screen.split("x");
+    const [width, height] = device.screen.split("x");
     console.log("创建录制窗口进程");
-    let sessionWin = new remote.BrowserWindow({
+    let sessionWin = (this.sessionWin = new remote.BrowserWindow({
       // frame: false,
       // center: true,
       // height: height * 2,
@@ -127,13 +170,13 @@ export default class extends Component {
       // transparent: true,
       title: "脚本录制"
       // titleBarStyle: "hiddenInset"
-    });
+    }));
     if (remote.process.defaultApp) {
       console.log("开发环境");
       sessionWin.loadURL(
         `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}?device=${
           // @ts-ignore
-          this.id
+          device.id
           // @ts-ignore
         }&width=${width}`
       );
@@ -142,36 +185,79 @@ export default class extends Component {
       console.log("生产环境");
       sessionWin.loadURL(
         // @ts-ignore
-        `file://${__dirname}/index.html?device=${this.id}&width=${width}`
+        `file://${__dirname}/index.html?device=${device.id}&width=${width}`
       );
     }
     sessionWin.maximize();
     sessionWin.show();
   }
+  toDevice(device) {
+    // @ts-ignore
+    console.log("请求本地端口转发到", device.id);
+    // @ts-ignore
+    ipcRenderer.send("forward", device.id);
+    console.log("请求获取设备应用列表");
+    request.get("/package/all", (_err, _res, body) => {
+      console.log(_err, _res, body);
+      console.log("得到应用列表,请求更新 state", body.value);
+      this.setState({ packages: JSON.parse(body.value) });
+    });
+    this.setState({ activeKey: "guide" });
+    this.device = device;
+  }
   devices() {
     console.log("设备列表组件渲染");
     return this.state.devices.map(device => (
-      <div key={device.id}>
-        {device.brand || device.id} {device.type}
+      <Card
+        key={device.id}
+        title={device.brand || device.id}
+        extra={
+          device.type !== "offline" ? (
+            <a onClick={() => this.toDevice(device)}>开始</a>
+          ) : (
+            device.type
+          )
+        }
+        style={{ width: 300 }}
+      >
         {device.type !== "offline" ? (
           <div>
-            {device.model}
-            <br />
-            Android {device.release} SDK {device.sdk}
-            <br />
-            {device.screen}
-            <br />
-            <Button onClick={this.openDeviceWindow.bind(device)}>开始</Button>
+            <p>{device.model}</p>
+            <p>
+              Android {device.release} SDK {device.sdk}
+            </p>
+            <p>{device.screen}</p>
           </div>
         ) : (
           <div>设备已离线，请重新打开USB调试</div>
         )}
         {console.log(device.id, "渲染")}
-      </div>
+      </Card>
     ));
   }
-
+  handleChange([packageName, activityName, appName]) {
+    // const desired = {
+    //   platformName: "Android",
+    //   deviceName: this.device.id,
+    //   appPackage: packageName,
+    //   appActivity: activityName,
+    //   automationName: "UiAutomator2"
+    // };
+    // driver.init(desired);
+    // client.shell(
+    //   this.device.id,
+    //   `monkey -p ${packageName} -c android.intent.category.LAUNCHER 1`
+    // );
+    console.log("请求启动", `${packageName}/${activityName}`);
+    client.shell(this.device.id, `am start -n ${packageName}/${activityName}`);
+    this.device.packageName = packageName;
+    this.device.appName = appName;
+    // this.setState({ packageName });
+    this.setState({ activeKey: "Recording" });
+    this.openDeviceWindow(this.device);
+  }
   render() {
+    console.log("首页渲染");
     return (
       <div className={"devices-wrap"}>
         <Layout className={"main-layout"}>
@@ -203,7 +289,14 @@ export default class extends Component {
                       <Icon type="delete" />
                     </div>
                     <div className="side-custom-tabs-tabpane-content">
-                      <div className="side-custom-tabs-tabpane-content-list" />
+                      <div className="side-custom-tabs-tabpane-content-list">
+                        <Tree
+                          onSelect={this.onSelectCode.bind(this)}
+                          defaultExpandedKeys={["0"]}
+                        >
+                          {this.showCode()}
+                        </Tree>
+                      </div>
                     </div>
                   </div>
                 </TabPane>
@@ -230,16 +323,35 @@ export default class extends Component {
               <Layout className={"main-content-layout"}>
                 <div className="main-content-layout-wrap">
                   <div className="main-business-wrap">
-                    <Tabs type="card" className="main-common-tabs">
+                    <Tabs
+                      type="card"
+                      activeKey={this.state.activeKey}
+                      className="main-common-tabs"
+                    >
                       <TabPane tab="设备列表" key="device">
-                        设备列表
                         {this.devices()}
                       </TabPane>
                       <TabPane tab="录制引导" key="guide">
-                        录制引导
+                        <Guide
+                          handleChange={this.handleChange.bind(this)}
+                          packages={this.state.packages}
+                        />
                       </TabPane>
                       <TabPane tab="步骤录制" key="Recording">
-                        步骤录制
+                        <RecordedActions
+                          code={this.state.code}
+                          device={this.device}
+                          finishRecord={activeKey => {
+                            if (this.sessionWin)
+                              try {
+                                this.sessionWin.close();
+                              } catch (e) {}
+                            this.setState({
+                              activeKey,
+                              code: null
+                            });
+                          }}
+                        />
                       </TabPane>
                     </Tabs>
                   </div>

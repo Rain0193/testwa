@@ -3,6 +3,7 @@ import React from "react";
 import { getRecordedActions, parseCoordinates, emitter } from "./lib";
 // @ts-ignore
 import InspectorCSS from "./Inspector.css";
+import { ipcRenderer } from "electron";
 export default ({ selectedElement, element, zIndex }) => {
   const { x1, y1, x2, y2 } = parseCoordinates(element);
   let left = x1 / 2;
@@ -22,7 +23,7 @@ export default ({ selectedElement, element, zIndex }) => {
           element
         );
         console.log("请求添加操作行为");
-        emitter.emit("recordedActions", [
+        ipcRenderer.send("recordedActions", [
           {
             action: "findAndAssign",
             params: [strategy, selector, variableName]

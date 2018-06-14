@@ -1,21 +1,40 @@
 console.log("操作行为组件模块");
 import React, { Component } from "react";
-import { Card, Select, Icon } from "antd";
+import { Card, Select, Icon, Button } from "antd";
 import { highlight } from "highlight.js";
 import frameworks from "./client-frameworks";
-import { emitter } from "./lib";
+import { emitter } from "../Inspector/lib";
+
+var PouchDB = require("pouchdb-browser");
+var db = new PouchDB("code");
 // @ts-ignore
 import InspectorStyles from "./Inspector.css";
+import { ipcRenderer } from "electron";
 const Option = Select.Option;
+
 export default class extends Component {
   constructor(props) {
     console.log("操作行为组件实例化");
     super(props);
     this.state = { actionFramework: "json", recordedActions: [] };
-    emitter.on("recordedActions", recordedActions => {
-      console.log("得到操作行为，更新state");
+    ipcRenderer.on("recordedActions", (_, recordedActions) => {
+      console.log("得到操作行为，更新state", recordedActions);
       this.setState({
         recordedActions: [...this.state.recordedActions, ...recordedActions]
+      });
+    });
+  }
+  componentDidMount() {
+    if (this.props.code) {
+      console.log(this.props.code, "in record");
+      this.setState({
+        recordedActions: this.props.code.value
+      });
+    }
+    emitter.on("code", code => {
+      console.log(code, "in record");
+      this.setState({
+        recordedActions: code.value
       });
     });
   }
@@ -29,10 +48,36 @@ export default class extends Component {
     let rawCode = framework.getCodeString();
     return highlight(framework.language, rawCode, true).value;
   }
+  saveCode() {
+    console.log("saveCode");
+    if (this.props.code) {
+      this.props.code.value = this.state.recordedActions;
+      db.put(this.props.code);
+    } else {
+      db.post({
+        name: this.props.device.appName,
+        value: this.state.recordedActions
+      });
+    }
+    this.setState({ recordedActions: [] });
+    this.props.finishRecord("device");
+    // this.state.recordedActions.map(code => {
+    //   // code.params = JSON.stringify(code.params);
+    //   code._id = new Date().toISOString();
+    //   db.put(code, console.log);
+    // });
+  }
+  removeCode() {
+    db.remove(this.props.code);
+    this.setState({ recordedActions: [] });
+    this.props.finishRecord("device");
+  }
   actionBar() {
     console.log("生成语言菜单项");
     return (
       <div>
+        <Button onClick={this.saveCode.bind(this)}>保存</Button>
+        <Button onClick={this.removeCode.bind(this)}>删除</Button>
         <Select
           defaultValue="json"
           // @ts-ignore
