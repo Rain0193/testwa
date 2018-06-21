@@ -12,7 +12,7 @@ module.exports = function loader() {
     [
       path.relative(process.cwd(), this.resourcePath),
       "-b",
-      targetPath,
+      path.relative(process.cwd(), targetPath),
       "-O3z",
       "--validate",
       "--optimize",
