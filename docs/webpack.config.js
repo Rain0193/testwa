@@ -3,10 +3,10 @@
  */
 
 const path = require('path');
-const webpack = require('webpack');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const webpack = require('../../../Library/Caches/typescript/2.9/node_modules/@types/webpack');
+const MiniCssExtractPlugin = require("../../../Library/Caches/typescript/2.9/node_modules/@types/mini-css-extract-plugin");
+const UglifyJsPlugin = require('../../../Library/Caches/typescript/2.9/node_modules/@types/uglifyjs-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require("../../../Library/Caches/typescript/2.9/node_modules/@types/optimize-css-assets-webpack-plugin");
 
 // @ts-ignore
 const { dependencies } = require('./app/package.json');
