@@ -7,7 +7,7 @@ module.exports = {
       {
         include: /assembly/,
         test: /\.ts?$/,
-        loader: "assemblyscript-typescript-loader",
+        loader: "./as-loader",
         options: {
           outputPath: "dist/"
         }
