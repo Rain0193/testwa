@@ -7,10 +7,7 @@ module.exports = {
       {
         include: /assembly/,
         test: /\.ts?$/,
-        loader: "./as-loader",
-        options: {
-          outputPath: "dist/"
-        }
+        loader: "./as-loader"
       }
     ]
   }

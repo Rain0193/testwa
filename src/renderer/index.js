@@ -5,10 +5,10 @@ import React from "react";
 import { render } from "react-dom";
 import { Provider } from "styletron-react";
 import { parse } from "querystring";
-import { f } from "../../assembly/module";
+import { f } from "./assembly/module";
 // asmPromise.then(function(asmModule) {
 // here you can use the wasm.exports
-console.log("wasmwasmwasmwasmwasmwasmwasmwasmwasmwasm", f(5));
+console.log("===========", f(1));
 // });
 import "./app.css";
 (async () => {

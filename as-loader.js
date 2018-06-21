@@ -3,32 +3,18 @@ const fs = require("fs");
 const path = require("path");
 const asc = require("assemblyscript/cli/asc");
 
-function mkDirsSync(dirname) {
-  if (fs.existsSync(dirname)) {
-    return true;
-  } else {
-    if (mkDirsSync(path.dirname(dirname))) {
-      fs.mkdirSync(dirname);
-      return true;
-    }
-  }
-}
 module.exports = function loader() {
-  if (this.cacheable) this.cacheable();
-  var buildTempPath = path.join(this._compiler.context, "/dist/assembly/");
-  var targetPath = path.join(
-    buildTempPath,
+  const targetPath = path.join(
+    require("os").tmpdir(),
     path.parse(this.resourcePath).name + ".wasm"
   );
-  mkDirsSync(buildTempPath);
   asc.main(
     [
       path.relative(process.cwd(), this.resourcePath),
       "-b",
-      path.relative(process.cwd(), targetPath),
+      targetPath,
       "-O3z",
       "--validate",
-      "--sourceMap",
       "--optimize",
       "--noDebug"
     ],
