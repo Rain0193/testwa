@@ -75,6 +75,7 @@
     "@babel/preset-react": "^7.0.0-beta.51",
     "antd": "^3.6.3",
     "appium": "^1.8.1",
+    "assemblyscript": "AssemblyScript/assemblyscript",
     "axios": "^0.18.0",
     "electron": "^2.0.2",
     "electron-builder": "^20.15.1",

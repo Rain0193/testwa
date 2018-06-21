@@ -37,9 +37,9 @@ module.exports = function loader() {
       const asm = fs.readFileSync(targetPath);
       this.async()(
         null,
-        `const buffer = new ArrayBuffer(${new Buffer(asm).length});
+        `const buffer = new ArrayBuffer(${Buffer.from(asm).length});
         const uint8 = new Uint8Array(buffer);
-        uint8.set([${new Buffer(asm).join(",")}]);
+        uint8.set([${Buffer.from(asm).join(",")}]);
         module.exports = new WebAssembly.Instance(new WebAssembly.Module(uint8), {}).exports;`
       );
     }
