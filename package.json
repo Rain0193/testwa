@@ -27,9 +27,6 @@
   ],
   "homepage": "https://github.com/canfeit/testwa#readme",
   "scripts": {
-    "build": "npm run build:untouched && npm run build:optimized",
-    "build:untouched": "asc assembly/module.ts -t module.untouched.wat -b module.untouched.wasm --validate --sourceMap --measure",
-    "build:optimized": "asc assembly/module.ts -t module.optimized.wat -b module.optimized.wasm --validate --sourceMap --measure --optimize",
     "start": "electron-webpack dev",
     "package": "yarn compile && build -mwl --publish always",
     "package-all": "yarn compile && build -mwl",
@@ -37,7 +34,8 @@
     "package-win": "yarn compile && build --win --x64",
     "compile": "electron-webpack",
     "preinstall": "conda activate py2||echo '若安装失败请手动执行：conda activate py2,然后重试'",
-    "prepackage": "standard-version&&git push --follow-tags"
+    "prepackage": "standard-version&&git push --follow-tags",
+    "neon": "neon build ../src/main"
   },
   "build": {
     "productName": "testwa录制工具",
@@ -84,6 +82,7 @@
     "highlight.js": "^9.12.0",
     "minicap": "^0.2.1-0",
     "moment": "^2.22.2",
+    "neon-cli": "^0.1.23",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "request": "^2.87.0",
