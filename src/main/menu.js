@@ -3,24 +3,7 @@ import { app, shell, dialog } from "electron";
 import { autoUpdater } from "electron-updater";
 export default [
   {
-    label: "查看",
-    submenu: [
-      {
-        label: "刷新",
-        role: "reload"
-      },
-      {
-        label: "切换全屏",
-        role: "togglefullscreen"
-      },
-      {
-        label: "调试",
-        role: "toggledevtools"
-      }
-    ]
-  },
-  {
-    label: "帮助",
+    label: "关于",
     submenu: [
       {
         label: "云测平台",
@@ -46,9 +29,7 @@ export default [
           shell.openExternal("https://github.com/canfeit/testwa/issues");
         }
       },
-      {
-        type: "separator"
-      },
+      { type: "separator" },
       {
         label: "关于",
         click: () => {
@@ -62,21 +43,34 @@ export default [
           });
         }
       },
-      {
-        label: "已是最新",
-        id: "isLatest",
-        enabled: false
-      },
-      {
-        label: "正在下载更新",
-        id: "downloadingUpdate",
-        enabled: false
-      },
+      { label: "已是最新", id: "isLatest", enabled: false },
+      { label: "正在下载更新", id: "downloadingUpdate", enabled: false },
       {
         label: "重启并安装更新",
         id: "restartToUpdate",
         click: autoUpdater.quitAndInstall
       }
+    ]
+  },
+  {
+    label: "查看",
+    submenu: [
+      { label: "刷新", role: "reload" },
+      { label: "切换全屏", role: "togglefullscreen" },
+      { label: "调试", role: "toggledevtools" }
+    ]
+  },
+  {
+    label: "修改",
+    submenu: [
+      { label: "撤销", role: "undo" },
+      { label: "恢复", role: "redo" },
+      { type: "separator" },
+      { label: "剪切", role: "cut" },
+      { label: "复制", role: "copy" },
+      { label: "粘贴", role: "paste" },
+      { label: "删除", role: "delete" },
+      { label: "全选", role: "selectall" }
     ]
   }
 ];

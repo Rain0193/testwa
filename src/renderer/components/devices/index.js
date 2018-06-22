@@ -44,7 +44,7 @@ export default class extends Component {
       this.setState({ codes });
       console.log(rows, codes, "hhhhhhhhhhhhhhhhhhhhh");
     });
-    this.device = null;
+    this.device = {};
     this.terminalSwitch = this.terminalSwitch.bind(this);
     console.log("请求获取设备列表信息");
     ipcRenderer.send("devices"); // dev
@@ -142,7 +142,7 @@ export default class extends Component {
     return (
       <Tree.TreeNode title="脚本" key="0">
         {this.state.codes.map(code => (
-          <Tree.TreeNode title={code.name} key={code._id} />
+          <Tree.TreeNode title={code.info.appName} key={code._id} />
         ))}
       </Tree.TreeNode>
     );

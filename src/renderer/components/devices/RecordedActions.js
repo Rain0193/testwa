@@ -52,10 +52,14 @@ export default class extends Component {
     let framework = new frameworks["jsWd"]();
     framework.caps = {
       platformName: "Android",
-      deviceName: this.props.device.id,
-      appPackage: this.props.device.packageName,
-      appActivity: this.props.device.activityName
+      automationName: "UiAutomator2",
+      deviceName: this.props.device.id || this.props.code.info.id,
+      appPackage:
+        this.props.device.packageName || this.props.code.info.packageName,
+      appActivity:
+        this.props.device.activityName || this.props.code.info.activityName
     };
+    console.log(framework.caps);
     framework.actions = this.state.recordedActions;
     let rawCode = framework.getCodeString(true);
     require("fs").writeFile("code.js", rawCode, () => fork("code.js"));
@@ -67,7 +71,7 @@ export default class extends Component {
       db.put(this.props.code);
     } else {
       db.post({
-        name: this.props.device.appName,
+        info: this.props.device,
         value: this.state.recordedActions
       });
     }
