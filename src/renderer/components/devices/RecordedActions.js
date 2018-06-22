@@ -4,7 +4,7 @@ import { Card, Select, Icon, Button, Table } from "antd";
 import { highlight } from "highlight.js";
 import frameworks from "./client-frameworks";
 import { emitter } from "../Inspector/lib";
-
+import { fork } from "child_process";
 var PouchDB = require("pouchdb-browser");
 var db = new PouchDB("code");
 // @ts-ignore
@@ -48,6 +48,18 @@ export default class extends Component {
     let rawCode = framework.getCodeString();
     return highlight(framework.language, rawCode, true).value;
   }
+  runCode() {
+    let framework = new frameworks["jsWd"]();
+    framework.caps = {
+      platformName: "Android",
+      deviceName: this.props.device.id,
+      appPackage: this.props.device.packageName,
+      appActivity: this.props.device.activityName
+    };
+    framework.actions = this.state.recordedActions;
+    let rawCode = framework.getCodeString(true);
+    require("fs").writeFile("code.js", rawCode, () => fork("code.js"));
+  }
   saveCode() {
     console.log("saveCode");
     if (this.props.code) {
@@ -76,6 +88,7 @@ export default class extends Component {
     console.log("生成语言菜单项");
     return (
       <div>
+        <Button onClick={this.runCode.bind(this)}>回放</Button>
         <Button onClick={this.saveCode.bind(this)}>保存</Button>
         <Button onClick={this.removeCode.bind(this)}>删除</Button>
         <Select

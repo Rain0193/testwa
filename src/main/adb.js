@@ -2,6 +2,7 @@ console.log("adb封装模块");
 import { ipcMain } from "electron";
 import adbkit from "adbkit";
 export const client = adbkit.createClient();
+const ApkReader = require("adbkit-apkreader");
 ipcMain.on("forward", (_, deviceID) => {
   console.log("端口映射到", deviceID);
   client.forward(deviceID, "tcp:1717", "localabstract:minicap");
@@ -55,23 +56,40 @@ export default async window => {
         "/data/local/tmp/minicap.so",
         511
       ),
-      (await client.isInstalled(device.id, "io.appium.uiautomator2.server"))
+      (await client
+        .shell(device.id, "dumpsys package io.appium.uiautomator2.server")
+        .then(adbkit.util.readAll))
+        // .toString()
+        // .match(/versionName=(.*)/)[1]
+        .includes(
+          "versionName=" +
+            (await ApkReader.open(
+              // @ts-ignore
+              `${__static}/uiautomator2/apks/uiautomator2-server.apk`
+            ).then(reader => reader.readManifest())).versionName +
+            "\n"
+        )
         ? true
-        : client.install(
-            device.id,
-            // @ts-ignore
-            `${__static}/uiautomator2/apks/uiautomator2-server.apk`
-          ),
-      (await client.isInstalled(
-        device.id,
-        "io.appium.uiautomator2.server.test"
-      ))
-        ? true
-        : client.install(
-            device.id,
-            // @ts-ignore
-            `${__static}/uiautomator2/apks/uiautomator2-test.apk`
-          )
+        : Promise.all([
+            client
+              .uninstall(device.id, "io.appium.uiautomator2.server")
+              .then(() => {
+                client.install(
+                  device.id,
+                  // @ts-ignore
+                  `${__static}/uiautomator2/apks/uiautomator2-server.apk`
+                );
+              }),
+            client
+              .uninstall(device.id, "io.appium.uiautomator2.server.test")
+              .then(() => {
+                client.install(
+                  device.id,
+                  // @ts-ignore
+                  `${__static}/uiautomator2/apks/uiautomator2-test.apk`
+                );
+              })
+          ])
     ]);
     console.log("启动安卓端服务", device.id);
     client.shell(

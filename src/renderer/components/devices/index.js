@@ -252,6 +252,7 @@ export default class extends Component {
     client.shell(this.device.id, `am start -n ${packageName}/${activityName}`);
     this.device.packageName = packageName;
     this.device.appName = appName;
+    this.device.activityName = activityName;
     // this.setState({ packageName });
     this.setState({ activeKey: "Recording" });
     this.openDeviceWindow(this.device);

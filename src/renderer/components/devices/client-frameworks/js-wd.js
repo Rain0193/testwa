@@ -16,7 +16,9 @@ class JsWdFramework extends Framework {
 const wd = require('wd');
 const driver = wd.promiseChainRemote("${this.serverUrl}");
 const caps = ${caps};
-
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 async function main () {
   await driver.init(caps);
 ${this.indent(code, 2)}
