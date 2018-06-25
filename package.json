@@ -1,7 +1,7 @@
 {
   "name": "testwa",
   "private": true,
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Automated test Script recording tool for Apps.",
   "author": "canfeit <canfeit@qq.com> (http://testwa.com/)",
   "license": "MIT",
@@ -28,7 +28,7 @@
   "homepage": "https://github.com/canfeit/testwa#readme",
   "scripts": {
     "start": "electron-webpack dev",
-    "package": "yarn compile && build -mwl --publish always",
+    "package": "yarn compile && build -ml --publish always",
     "package-all": "yarn compile && build -mwl",
     "package-mac": "yarn compile && build --mac",
     "package-win": "yarn compile && build --win --x64",
@@ -66,19 +66,19 @@
   },
   "dependencies": {
     "adbkit": "^2.11.0",
-    "pouchdb-browser": "^6.4.3",
-    "wd": "^1.9.0",
-    "source-map-support": "^0.5.6"
+    "pouchdb-browser": "^7.0.0",
+    "source-map-support": "^0.5.6",
+    "wd": "^1.10.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0-beta.51",
     "adbkit-apkreader": "^3.0.1",
-    "antd": "^3.6.3",
+    "antd": "^3.6.4",
     "appium": "^1.8.1",
     "assemblyscript": "AssemblyScript/assemblyscript",
     "axios": "^0.18.0",
     "electron": "^2.0.3",
-    "electron-builder": "^20.15.1",
+    "electron-builder": "^20.16.0",
     "electron-updater": "^2.21.10",
     "electron-webpack": "^2.1.2",
     "highlight.js": "^9.12.0",
@@ -90,8 +90,8 @@
     "request": "^2.87.0",
     "standard-version": "^4.4.0",
     "styletron-engine-atomic": "^1.0.5",
-    "styletron-react": "^4.3.0",
-    "webpack": "^4.12.0",
+    "styletron-react": "^4.3.1",
+    "webpack": "^4.12.1",
     "xpath": "^0.0.27"
   },
   "electronWebpack": {
