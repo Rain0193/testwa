@@ -73,22 +73,22 @@ export default async window => {
         : Promise.all([
             client
               .uninstall(device.id, "io.appium.uiautomator2.server")
-              .then(() => {
+              .then(() =>
                 client.install(
                   device.id,
                   // @ts-ignore
                   `${__static}/uiautomator2/apks/uiautomator2-server.apk`
-                );
-              }),
+                )
+              ),
             client
               .uninstall(device.id, "io.appium.uiautomator2.server.test")
-              .then(() => {
+              .then(() =>
                 client.install(
                   device.id,
                   // @ts-ignore
                   `${__static}/uiautomator2/apks/uiautomator2-test.apk`
-                );
-              })
+                )
+              )
           ])
     ]);
     console.log("启动安卓端服务", device.id);
