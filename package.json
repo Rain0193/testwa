@@ -1,7 +1,7 @@
 {
   "name": "testwa",
   "private": true,
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Automated test Script recording tool for Apps.",
   "author": "canfeit <canfeit@qq.com> (http://testwa.com/)",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "package-all": "yarn compile && build -mwl",
     "package-mac": "yarn compile && build --mac",
     "package-win": "yarn compile && build --win --x64",
-    "compile": "electron-webpack",
+    "compile": "",
     "preinstall": "conda activate py2||echo '若安装失败请手动执行：conda activate py2,然后重试'",
     "prepackage": "standard-version&&git push --follow-tags",
     "neon": "neon build ../src/main"
