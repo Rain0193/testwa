@@ -1,7 +1,7 @@
 {
   "name": "testwa",
   "private": true,
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Automated test Script recording tool for Apps.",
   "author": "canfeit <canfeit@qq.com> (http://testwa.com/)",
   "license": "MIT",
