@@ -28,13 +28,13 @@
   "homepage": "https://github.com/canfeit/testwa#readme",
   "scripts": {
     "start": "electron-webpack dev",
-    "package": "yarn compile && build -ml --publish always",
-    "package-all": "yarn compile && build -mwl",
-    "package-mac": "yarn compile && build --mac",
+    "package": "build -mwl --publish always -c.mac.identity=null",
+    "package-all": "yarn compile && build -mwl -c.mac.identity=null",
+    "package-mac": "yarn compile && build --mac -c.mac.identity=null",
     "package-win": "yarn compile && build --win --x64",
-    "compile": "node -v",
+    "compile": "electron-webpack",
     "preinstall": "conda activate py2||echo '若安装失败请手动执行：conda activate py2,然后重试'",
-    "prepackage": "standard-version&&git push --follow-tags",
+    "release": "standard-version&&git push --follow-tags&&yarn compile",
     "neon": "neon build ../src/main"
   },
   "build": {
@@ -68,7 +68,7 @@
     "adbkit": "^2.11.0",
     "pouchdb-browser": "^7.0.0",
     "source-map-support": "^0.5.6",
-    "wd": "^1.10.0"
+    "wd": "^1.10.1"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0-beta.51",

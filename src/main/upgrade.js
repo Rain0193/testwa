@@ -30,5 +30,5 @@ export default () => {
     updateMenu("isLatest");
   });
   console.log("准备检查更新");
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdates();
 };
