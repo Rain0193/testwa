@@ -36,13 +36,11 @@ export default class extends Component {
       db.allDocs({ include_docs: true, descending: true }).then(({ rows }) => {
         const codes = rows.map(({ doc }) => doc);
         this.setState({ codes });
-        console.log(rows, codes, "hhhhhhhhhhhhhhhhhhhhh");
       });
     });
     db.allDocs({ include_docs: true, descending: true }).then(({ rows }) => {
       const codes = rows.map(({ doc }) => doc);
       this.setState({ codes });
-      console.log(rows, codes, "hhhhhhhhhhhhhhhhhhhhh");
     });
     this.device = {};
     this.terminalSwitch = this.terminalSwitch.bind(this);
@@ -142,7 +140,12 @@ export default class extends Component {
     return (
       <Tree.TreeNode title="脚本" key="0">
         {this.state.codes.map(code => (
-          <Tree.TreeNode title={code.info.appName} key={code._id} />
+          <Tree.TreeNode
+            title={
+              code.info ? code.info.appName : "旧版数据不兼容，请清空indexedDB"
+            }
+            key={code._id}
+          />
         ))}
       </Tree.TreeNode>
     );

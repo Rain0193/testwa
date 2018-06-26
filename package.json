@@ -28,9 +28,9 @@
   "homepage": "https://github.com/canfeit/testwa#readme",
   "scripts": {
     "start": "electron-webpack dev",
-    "package": "build -mwl --publish always -c.mac.identity=null",
-    "package-all": "yarn compile && build -mwl -c.mac.identity=null",
-    "package-mac": "yarn compile && build --mac -c.mac.identity=null",
+    "package": "build -mwl --publish always",
+    "package-all": "yarn compile && build -mwl",
+    "package-mac": "yarn compile && build --mac",
     "package-win": "yarn compile && build --win --x64",
     "compile": "electron-webpack",
     "preinstall": "conda activate py2||echo '若安装失败请手动执行：conda activate py2,然后重试'",
