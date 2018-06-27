@@ -2,28 +2,29 @@
 
 var wd = require("wd");
 var driver = wd.promiseChainRemote({
-  host: 'localhost',
+  host: "localhost",
   port: 4723
 });
 
-driver.init({
-  platformName: 'Android',
-  deviceName: 'Android Emulator',
-  // automationName: "UiAutomator2",
-  app: __dirname + "/ApiDemos-debug.apk" // will be set later
-}).elementByAccessibilityId('Graphics')
+driver
+  .init({
+    platformName: "Android",
+    deviceName: "Android Emulator",
+    // automationName: "UiAutomator2",
+    app: __dirname + "/ApiDemos-debug.apk" // will be set later
+  })
+  .elementByAccessibilityId("Graphics")
   .click()
-  .elementByAccessibilityId('Arcs')
+  .elementByAccessibilityId("Arcs")
   .back()
-  .elementByAccessibilityId('App')
-  .elementsByAndroidUIAutomator('new UiSelector().clickable(true)')
-  .elementsByAndroidUIAutomator('new UiSelector().enabled(true)')
-  .elementByXPath('//android.widget.TextView[@text=\'API Demos\']')
-  .elementByAccessibilityId('Graphics')
+  .elementByAccessibilityId("App")
+  .elementsByAndroidUIAutomator("new UiSelector().clickable(true)")
+  .elementsByAndroidUIAutomator("new UiSelector().enabled(true)")
+  .elementByXPath("//android.widget.TextView[@text='API Demos']")
+  .elementByAccessibilityId("Graphics")
   .click()
-  .elementByAccessibilityId('Arcs')
+  .elementByAccessibilityId("Arcs")
   .click()
-  .removeApp('io.appium.android.apis.ApiDemos')
+  .removeApp("io.appium.android.apis.ApiDemos")
   .quit()
-  .finally(function () {
-  });
+  .finally(function() {});

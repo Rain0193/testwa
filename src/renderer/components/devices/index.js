@@ -239,14 +239,6 @@ export default class extends Component {
     ));
   }
   handleChange([packageName, activityName, appName]) {
-    // const desired = {
-    //   platformName: "Android",
-    //   deviceName: this.device.id,
-    //   appPackage: packageName,
-    //   appActivity: activityName,
-    //   automationName: "UiAutomator2"
-    // };
-    // driver.init(desired);
     // client.shell(
     //   this.device.id,
     //   `monkey -p ${packageName} -c android.intent.category.LAUNCHER 1`

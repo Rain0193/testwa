@@ -1,7 +1,8 @@
 console.log("操作行为组件模块");
 import React, { Component } from "react";
 import { Card, Select, Icon, Button, Table } from "antd";
-import { highlight } from "highlight.js";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { docco } from "react-syntax-highlighter/styles/hljs";
 import frameworks from "./client-frameworks";
 import { emitter } from "../Inspector/lib";
 import { fork } from "child_process";
@@ -45,8 +46,7 @@ export default class extends Component {
       return JSON.stringify(recordedActions);
     let framework = new frameworks[this.state.actionFramework]();
     framework.actions = recordedActions;
-    let rawCode = framework.getCodeString();
-    return highlight(framework.language, rawCode, true).value;
+    return framework.getCodeString();
   }
   runCode() {
     let framework = new frameworks["jsWd"]();
@@ -141,10 +141,12 @@ export default class extends Component {
             dataSource={this.state.recordedActions}
           />
         ) : (
-          <div
-            className={InspectorStyles["recorded-code"]}
-            dangerouslySetInnerHTML={{ __html: this.code() }}
-          />
+          <SyntaxHighlighter
+            language={this.state.actionFramework}
+            style={docco}
+          >
+            {this.code()}
+          </SyntaxHighlighter>
         )}
         {console.log("操作行为组件内容")}
       </Card>
