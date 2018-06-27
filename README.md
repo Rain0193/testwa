@@ -43,6 +43,12 @@ Eletron 通过 package.json 中的 main 字段来定义应用入口。main.js �
 
 ## TODOS
 
-- chrome 性能调试
-- react 组件通信
-- electron 进程通信
+- appium 会替换 UIautomation2
+- appium UIautomation2 无法回放
+- one，two 启动冲突
+- one 查找元素时无响应(性能问题？)
+- ui 解析速度低于用户操作速度导致获取前一屏元素
+- chrome 性能，调试
+- react 跨组件通信
+- electron 多渲染进程间通信
+- testwa 服务间通信

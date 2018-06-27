@@ -78,8 +78,8 @@
     "assemblyscript": "AssemblyScript/assemblyscript",
     "axios": "^0.18.0",
     "electron": "^2.0.3",
-    "electron-builder": "^20.16.0",
-    "electron-updater": "^2.21.10",
+    "electron-builder": "^20.16.4",
+    "electron-updater": "^2.22.1",
     "electron-webpack": "^2.1.2",
     "minicap": "^0.2.1-0",
     "moment": "^2.22.2",
@@ -91,7 +91,7 @@
     "standard-version": "^4.4.0",
     "styletron-engine-atomic": "^1.0.5",
     "styletron-react": "^4.3.1",
-    "webpack": "^4.12.1",
+    "webpack": "^4.12.2",
     "xpath": "^0.0.27"
   },
   "electronWebpack": {
